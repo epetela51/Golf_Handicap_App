@@ -1,1 +1,26 @@
-<p style="text-decoration: underline; color: red;">Round input table goes here (round-input component)</p>
+<!-- <p style="text-decoration: underline; color: red;">Round input table goes here (round-input component)</p> -->
+
+<!-- Dynamically generate rows ? -->
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th *ngFor="let header of tableHeaders">{{header}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- slice is used to iterate through a subset/slice of the original full array and just show 3 rows from the original array of 6 -->
+            <tr *ngFor="let row of columnsAndRows | slice:0:3; index as i">
+                <!-- index is used to track the round number -->
+                <td>{{i+1}}</td>
+                <td *ngFor="let column of columnsAndRows"><input [type]="column"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+
+    <button>Calculate Handicap</button>
+    <button>Add Row</button>
+
+</div>
