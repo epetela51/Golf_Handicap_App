@@ -33,6 +33,14 @@ export class RoundInputComponent implements OnInit {
     'number',
   ]
 
+  // columnsAndRows: string[] = [
+  //   'number',
+  //   'number',
+  //   'number',
+  //   'number',
+  //   'number'
+  // ]
+
 
   constructor() { 
   }
@@ -41,7 +49,14 @@ export class RoundInputComponent implements OnInit {
   };
 
   addRowOnBtnClick() {
-    this.rows.push('number')
+    
+    if (this.rows.length <= 19) {
+      this.rows.push('number')
+    } else {
+      // alert being used as a placeholder
+      // replace with disabling the button?? Event Binding to do this??
+      alert('Can\'t have more than 20 total rounds')
+    }
   }
 
 }
