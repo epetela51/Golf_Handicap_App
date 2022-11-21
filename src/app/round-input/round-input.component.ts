@@ -16,22 +16,32 @@ export class RoundInputComponent implements OnInit {
     'Score Differential'
   ]
 
-  // used to loop through and generate rows & columns of the table with input type of number
-  columnsAndRows: string[] = [
+// two different arrays for rows & columns so that on btn click to add a row the number of columns stays the same but the number of rows increases
+
+// improve this into one array???
+  rows: string[] = [
     'number',
     'number',
     'number',
-    'number',
-    'number'
   ]
 
-  constructor() { 
+  columns: string[] = [
+    'number',
+    'number',
+    'number',
+    'number',
+    'number',
+  ]
 
+
+  constructor() { 
   }
 
   ngOnInit(): void {
-  }
+  };
 
-  
+  addRowOnBtnClick() {
+    this.rows.push('number')
+  }
 
 }
