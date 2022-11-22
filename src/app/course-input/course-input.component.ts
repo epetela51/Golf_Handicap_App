@@ -7,6 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CourseInputComponent implements OnInit {
 
+  tableHeaders: string [] = [
+    'Handicap Index',
+    'Course Rating',
+    'Slope Rating',
+    'Par'
+  ]
+
   constructor() { }
 
   ngOnInit(): void {

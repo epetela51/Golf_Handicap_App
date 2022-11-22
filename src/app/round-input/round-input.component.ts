@@ -30,13 +30,22 @@ export class RoundInputComponent implements OnInit {
   };
 
   addRowOnBtnClick() {
-    
     if (this.rows.length <= 19) {
       this.rows.push('number')
     } else {
       // alert being used as a placeholder
       // replace with disabling the button?? Event Binding to do this??
       alert('Can\'t have more than 20 total rounds')
+    }
+  }
+
+  deleteRowOnBtnClick() {
+    if (this.rows.length > 3) {
+      this.rows.pop();
+    } else {
+      // alert being used as a placeholder
+      // replace with disabling the button?? Event Binding to do this??
+      alert('Need a minimum of 3 rounds')
     }
   }
 
