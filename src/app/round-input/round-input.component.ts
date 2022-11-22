@@ -16,31 +16,12 @@ export class RoundInputComponent implements OnInit {
     'Score Differential'
   ]
 
-// two different arrays for rows & columns so that on btn click to add a row the number of columns stays the same but the number of rows increases
-
 // improve this into one array???
   rows: string[] = [
     'number',
     'number',
     'number',
   ]
-
-  columns: string[] = [
-    'number',
-    'number',
-    'number',
-    'number',
-    'number',
-  ]
-
-  // columnsAndRows: string[] = [
-  //   'number',
-  //   'number',
-  //   'number',
-  //   'number',
-  //   'number'
-  // ]
-
 
   constructor() { 
   }

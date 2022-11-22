@@ -9,11 +9,11 @@
             </tr>
         </thead>
         <tbody>
-            <!-- slice is used to iterate through a subset/slice of the original full array and just show 3 rows from the original array of 6 -->
             <tr *ngFor="let row of rows index as i">
                 <!-- index is used to track the round number -->
                 <td>{{i+1}}</td>
-                <td *ngFor="let column of columns"><input [type]="column"></td>
+                <!-- slice is used to start the iteration at position 1 (since there is no input in column position 0) -->
+                <td *ngFor="let column of tableHeaders | slice:1"><input type="number"></td>
             </tr>
         </tbody>
     </table>
