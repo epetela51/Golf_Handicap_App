@@ -16,22 +16,37 @@ export class RoundInputComponent implements OnInit {
     'Score Differential'
   ]
 
-  // used to loop through and generate rows & columns of the table with input type of number
-  columnsAndRows: string[] = [
+// improve this into one array???
+  rows: string[] = [
     'number',
     'number',
     'number',
-    'number',
-    'number'
   ]
 
   constructor() { 
-
   }
 
   ngOnInit(): void {
+  };
+
+  addRowOnBtnClick() {
+    if (this.rows.length <= 19) {
+      this.rows.push('number')
+    } else {
+      // alert being used as a placeholder
+      // replace with disabling the button?? Event Binding to do this??
+      alert('Can\'t have more than 20 total rounds')
+    }
   }
 
-  
+  deleteRowOnBtnClick() {
+    if (this.rows.length > 3) {
+      this.rows.pop();
+    } else {
+      // alert being used as a placeholder
+      // replace with disabling the button?? Event Binding to do this??
+      alert('Need a minimum of 3 rounds')
+    }
+  }
 
 }
