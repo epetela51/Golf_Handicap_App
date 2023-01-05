@@ -1,25 +1,32 @@
-<!-- <p style="text-decoration: underline; color: red;">Round input table goes here (round-input component)</p> -->
-
 <div>
-    <table>
-        <thead>
-            <tr>
-                <th *ngFor="let header of tableHeaders">{{header}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let row of rows index as i">
-                <!-- index is used to track the round number -->
-                <td>{{i+1}}</td>
-                <!-- slice is used to start the iteration at position 1 (since there is no input in column position 0) -->
-                <td *ngFor="let column of tableHeaders | slice:1"><label for='round'></label><input type='number' value='0' id='round' required></td>
-            </tr>
-        </tbody>
-    </table>
+    <form action="">
+        <table>
+            <thead>
+                <tr>
+                    <th><label for="round_number">Round Number</label></th>
+                    <th><label for="eighteenHole_score">18 Hole Score</label></th>
+                    <!-- <th><label for="nineHole_score">9 Hole Score</label></th>
+                    <th><label for="course_rating"></label>Course Rating</th>
+                    <th><label for="slope_rating"></label>Slope Rating</th>
+                    <th><label for="score_differential"></label>Score Differential</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="round_number">1</td>
+                    <td><input type="number" id="eighteenHole_score" name="eighteenHole_score"></td>
+                    <!-- <td><input type="number" id="nineHole_score" name="nineHole_score"></td>
+                    <td><input type="number" id="course_rating" name="course_rating"></td>
+                    <td><input type="number" id="slope_rating" name="slope_rating"></td>
+                    <td><input type="number" id="score_differential" name="score_differential"></td> -->
+                </tr>
+            </tbody>
+        </table>
+    </form>
 
     <br>
 
-    <button>Calculate Handicap</button>
+    <input type="submit" (click)='calculateHandicapBtnClick()' value="Calculate Handicap">
     <button (click) = 'addRowOnBtnClick()'>Add Row</button>
     <button (click) = 'deleteRowOnBtnClick()' >Delete Row</button>
 
