@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RoundInputComponent implements OnInit {
 
+  eighteenHoleScore: number = 0;
+
   constructor() { 
   }
 
