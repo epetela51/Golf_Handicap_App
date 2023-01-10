@@ -1,33 +1,54 @@
 <div>
-    <form>
-        <table>
-            <thead>
-                <tr>
-                    <th><label for="round_number">Round Number</label></th>
-                    <th><label for="eighteenHole_score">18 Hole Score</label></th>
-                    <!-- <th><label for="nineHole_score">9 Hole Score</label></th>
-                    <th><label for="course_rating"></label>Course Rating</th>
-                    <th><label for="slope_rating"></label>Slope Rating</th>
-                    <th><label for="score_differential"></label>Score Differential</th> -->
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td id="round_number">1</td>
-                    <td><input type="number" id="eighteenHole_score" name="eighteenHole_score"></td>
-                    <!-- <td><input type="number" id="nineHole_score" name="nineHole_score"></td>
-                    <td><input type="number" id="course_rating" name="course_rating"></td>
-                    <td><input type="number" id="slope_rating" name="slope_rating"></td>
-                    <td><input type="number" id="score_differential" name="score_differential"></td> -->
-                </tr>
-            </tbody>
-        </table>
+    <form #handicapCalcForm="ngForm" (ngSubmit)="onSubmit(handicapCalcForm)">
+
+        <div class="form-group">
+            <label for="round_number">Round Number: </label>
+            <span id="round_number"> 1</span>
+        </div>
+
+        <div class="form-group">
+            <label for="eighteenHole_score">18 Hole Score</label>
+            <input id="eighteenHole_score" type="number" name="eighteenHole_score"
+                [(ngModel)]="userHandicapRounds.eighteenHole_score"
+                #eighteenHoleRoundField="ngModel"
+                [class.field-error]="handicapCalcForm.submitted && eighteenHoleRoundField.invalid"
+                (blur)="onBlur(eighteenHoleRoundField)"
+                min="50"
+                required >
+            <div [hidden]="!handicapCalcForm.submitted || eighteenHoleRoundField.valid"
+                class="alert alert-danger">
+                Enter a score of at LEAST 50
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="nineHole_score">9 Hole Score</label>
+            <input id='nineHole_score' type="number" name="nineHole_score"
+                [(ngModel)]="userHandicapRounds.nineHole_score"
+                #nineHoleRoundField="ngModel"
+                [class.field-error]="handicapCalcForm.submitted && nineHoleRoundField.invalid"
+                min="20"
+                required >
+            <div [hidden]="!handicapCalcForm.submitted || eighteenHoleRoundField.valid"
+                class="alert alert-danger">
+                Enter a score of at LEAST 20
+            </div>
+        </div>
+
+        <br>
+
+        <input type="submit" value="Calculate Handicap">
+
     </form>
 
     <br>
 
-    <input type="submit" (click)='calculateHandicapBtnClick()' value="Calculate Handicap">
+    <h3>{{userHandicapRounds | json}}</h3>
+    <h3>{{originalUserHandicapRounds | json}}</h3>
+
+    <br>
+<!-- 
     <button (click) = 'addRowOnBtnClick()'>Add Row</button>
-    <button (click) = 'deleteRowOnBtnClick()' >Delete Row</button>
+    <button (click) = 'deleteRowOnBtnClick()' >Delete Row</button> -->
 
 </div>
