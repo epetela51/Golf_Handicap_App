@@ -1,5 +1,5 @@
 <div>
-    <form #handicapCalcForm="ngForm" (ngSubmit)="onSubmit(handicapCalcForm)">
+    <form #handicapCalcForm="ngForm">
 
         <div class="form-group">
             <label for="round_number">Round Number: </label>
@@ -12,12 +12,11 @@
                 [(ngModel)]="userHandicapRounds.eighteenHole_score"
                 #eighteenHoleRoundField="ngModel"
                 [class.field-error]="handicapCalcForm.submitted && eighteenHoleRoundField.invalid"
-                (blur)="onBlur(eighteenHoleRoundField)"
-                min="50"
+                min="18"
                 required >
             <div [hidden]="!handicapCalcForm.submitted || eighteenHoleRoundField.valid"
                 class="alert alert-danger">
-                Enter a score of at LEAST 50
+                Enter a score of at LEAST 18
             </div>
         </div>
 
@@ -27,26 +26,29 @@
                 [(ngModel)]="userHandicapRounds.nineHole_score"
                 #nineHoleRoundField="ngModel"
                 [class.field-error]="handicapCalcForm.submitted && nineHoleRoundField.invalid"
-                min="20"
+                min="9"
                 required >
             <div [hidden]="!handicapCalcForm.submitted || eighteenHoleRoundField.valid"
                 class="alert alert-danger">
-                Enter a score of at LEAST 20
+                Enter a score of at LEAST 9
             </div>
+            <br>
+            Handicap Form Submitted?: {{handicapCalcForm.submitted}}
         </div>
 
         <br>
 
-        <input type="submit" value="Calculate Handicap">
+        <!-- button needs to stay within form for validation to fire -->
+        <button (click)='calculateHandicapBtnClick()'>Calculate Handicap</button>
 
     </form>
 
     <br>
 
     <h3>{{userHandicapRounds | json}}</h3>
-    <h3>{{originalUserHandicapRounds | json}}</h3>
 
     <br>
+
 <!-- 
     <button (click) = 'addRowOnBtnClick()'>Add Row</button>
     <button (click) = 'deleteRowOnBtnClick()' >Delete Row</button> -->

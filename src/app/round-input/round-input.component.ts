@@ -33,16 +33,7 @@ export class RoundInputComponent implements OnInit {
 
   // will PROBABLY need to use this method to calculate the handicap and display it on the screen
   calculateHandicapBtnClick() {
-    alert('Calculate Handicap on click')
+    console.log('button firing for calculation')
   }
 
-  // allows you to have something take place when the blur event takes place.  This can be used on any event, just using blur as the current example
-  onBlur(field: NgModel) {
-    console.log('in inBlur ', field.valid)
-  }
-
-  // used for submitting a form.  This MIGHT be more applicable if I want to save round scores in the future????
-  onSubmit(form: NgForm) {
-    console.log('in onSubmit: ', form.valid)
-  }
 }
