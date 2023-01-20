@@ -1,4 +1,7 @@
 export interface UserHandicapRounds {
-    eighteenHole_score: number;
-    nineHole_score: number;
+    eighteenHoleScore: number;
+    nineHoleScore: number;
+    courseRating: number;
+    slopeRating: number;
+    scoreDifferential: number;
 }

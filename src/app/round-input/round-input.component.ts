@@ -11,8 +11,11 @@ export class RoundInputComponent implements OnInit {
 
   // used to keep the original data and helps prevent from lost data from user pressing back button, cancel btn, etc.
   originalUserHandicapRounds: UserHandicapRounds = {
-    eighteenHole_score: 0,
-    nineHole_score: 0
+    eighteenHoleScore: 0,
+    nineHoleScore: 0,
+    courseRating: 0,
+    slopeRating: 0,
+    scoreDifferential: 0
   }
 
   userHandicapRounds: UserHandicapRounds = { ...this.originalUserHandicapRounds };
@@ -24,11 +27,11 @@ export class RoundInputComponent implements OnInit {
   };
 
   addRowOnBtnClick() {
-    alert('Add a row on click')
+    console.log('Add a row on click')
   }
 
   deleteRowOnBtnClick() {
-    alert('Delete a row on click');
+    console.log('Delete a row on click');
   }
 
   // will PROBABLY need to use this method to calculate the handicap and display it on the screen

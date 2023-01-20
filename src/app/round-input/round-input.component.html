@@ -1,40 +1,87 @@
 <div>
     <form #handicapCalcForm="ngForm">
 
+        <!-- Round number -->
         <div class="form-group">
             <label for="round_number">Round Number: </label>
             <span id="round_number"> 1</span>
         </div>
 
+        <!-- 18 hole score input -->
         <div class="form-group">
-            <label for="eighteenHole_score">18 Hole Score</label>
-            <input id="eighteenHole_score" type="number" name="eighteenHole_score"
-                [(ngModel)]="userHandicapRounds.eighteenHole_score"
+            <label for="eighteenHoleScore">18 Hole Score</label>
+            <input id="eighteenHoleScore" type="number" name="eighteenHoleScore"
+                [(ngModel)]="userHandicapRounds.eighteenHoleScore"
                 #eighteenHoleRoundField="ngModel"
                 [class.field-error]="handicapCalcForm.submitted && eighteenHoleRoundField.invalid"
                 min="18"
                 required >
+            <!-- Div is used to display validation error if conditions aren't met when user tries to 'submit'/perform calculation -->
             <div [hidden]="!handicapCalcForm.submitted || eighteenHoleRoundField.valid"
                 class="alert alert-danger">
-                Enter a score of at LEAST 18
+                Enter a score of AT LEAST 18
             </div>
         </div>
 
+        <!-- 9 hole score input -->
         <div class="form-group">
-            <label for="nineHole_score">9 Hole Score</label>
-            <input id='nineHole_score' type="number" name="nineHole_score"
-                [(ngModel)]="userHandicapRounds.nineHole_score"
+            <label for="nineHoleScore">9 Hole Score</label>
+            <input id='nineHoleScore' type="number" name="nineHoleScore"
+                [(ngModel)]="userHandicapRounds.nineHoleScore"
                 #nineHoleRoundField="ngModel"
                 [class.field-error]="handicapCalcForm.submitted && nineHoleRoundField.invalid"
                 min="9"
                 required >
-            <div [hidden]="!handicapCalcForm.submitted || eighteenHoleRoundField.valid"
+            <div [hidden]="!handicapCalcForm.submitted || nineHoleRoundField.valid"
                 class="alert alert-danger">
-                Enter a score of at LEAST 9
+                Enter a score of AT LEAST 9
             </div>
-            <br>
-            Handicap Form Submitted?: {{handicapCalcForm.submitted}}
         </div>
+
+        <!-- course rating input -->
+        <div class="form-group">
+            <label for="courseRating">Course Rating</label>
+            <input id='courseRating' type="number" name="courseRating"
+                [(ngModel)]="userHandicapRounds.courseRating"
+                #courseRatingField="ngModel"
+                [class.field-error]="handicapCalcForm.submitted && courseRatingField.invalid"
+                required >
+            <div [hidden]="!handicapCalcForm.submitted || courseRatingField.value !== 0"
+                class="alert alert-danger">
+                Enter a course rating of AT LEAST 1
+            </div>
+        </div>
+
+        <!-- slope rating input -->
+        <div class="form-group">
+            <label for="slopeRating">Slope Rating</label>
+            <input id='slopeRating' type="number" name="slopeRating"
+                [(ngModel)]="userHandicapRounds.slopeRating"
+                #slopeRatingField="ngModel"
+                [class.field-error]="handicapCalcForm.submitted && slopeRatingField.invalid"
+                required >
+            <div [hidden]="!handicapCalcForm.submitted || slopeRatingField.value !== 0"
+                class="alert alert-danger">
+                Enter a slope rating of AT LEAST 1
+            </div>
+        </div>
+
+        <!-- score differential input -->
+        <div class="form-group">
+            <label for="scoreDifferential">Score Differential</label>
+            <input id='scoreDifferential' type="number" name="scoreDifferential"
+                [(ngModel)]="userHandicapRounds.scoreDifferential"
+                #scoreDifferentialField="ngModel"
+                [class.field-error]="handicapCalcForm.submitted && scoreDifferentialField.invalid"
+                required >
+            <div [hidden]="!handicapCalcForm.submitted || scoreDifferentialField.value !== 0"
+                class="alert alert-danger">
+                Enter a score differential of AT LEAST 1
+            </div>
+        </div>
+
+        <br>
+        Handicap Form Submitted?: {{handicapCalcForm.submitted}}
 
         <br>
 
