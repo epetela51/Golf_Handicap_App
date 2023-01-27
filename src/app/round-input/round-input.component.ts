@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm, NgModel } from '@angular/forms';
 import { UserHandicapRounds } from '../data/user-handicap-modal';
 
 @Component({
@@ -20,6 +19,8 @@ export class RoundInputComponent implements OnInit {
 
   userHandicapRounds: UserHandicapRounds = { ...this.originalUserHandicapRounds };
 
+  handicapNumber: number;
+
   constructor() { 
   }
 
@@ -37,6 +38,11 @@ export class RoundInputComponent implements OnInit {
   // will PROBABLY need to use this method to calculate the handicap and display it on the screen
   calculateHandicapBtnClick() {
     console.log('button firing for calculation')
+    console.log(this.userHandicapRounds);
+
+    this.handicapNumber = this.userHandicapRounds.eighteenHoleScore + this.userHandicapRounds.nineHoleScore
+
+    console.log(`Addition is: ${this.handicapNumber}`);
   }
 
 }
