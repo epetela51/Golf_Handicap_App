@@ -17,6 +17,14 @@ export class RoundInputComponent implements OnInit {
     scoreDifferential: 0
   }
 
+  test: Array <any> = [
+    '18 Hole Score',
+    '9 Hole Score',
+    'Course Rating',
+    'Slope Rating',
+    'Score Differential'
+  ]
+
   userHandicapRounds: UserHandicapRounds = { ...this.originalUserHandicapRounds };
 
   handicapNumber: number;

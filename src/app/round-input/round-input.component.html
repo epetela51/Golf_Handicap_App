@@ -96,6 +96,15 @@
     <h3>Handicap Sum Is: {{handicapNumber}}</h3>
 
     <br>
+    <hr style="border-width: 15px;">
+    <br>
+
+    <div>
+        <div *ngFor="let fun of test; let i = index">
+            <h4>{{fun}} : {{i + 1}}</h4>
+            <input type="number">
+        </div>
+    </div>
 
 <!-- 
     <button (click) = 'addRowOnBtnClick()'>Add Row</button>
