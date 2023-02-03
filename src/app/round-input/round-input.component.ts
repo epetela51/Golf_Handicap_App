@@ -29,19 +29,10 @@ export class RoundInputComponent implements OnInit {
 
   handicapNumber: number;
 
-  // used in ngFor to duplicate the form 3 times on page load (instead of manually entering the form 3 times)
-  repeatCount = 3;
-  repeatTimes: Array<any> = [];
-
   constructor() { 
   }
 
   ngOnInit(): void {
-    for (let i = 0; i < this.repeatCount; i++) {
-      // you can push anything, i, '', letters.  This is used for the ngFor loop and it only cares about the number of items in the array and not the actual content inside the array
-      this.repeatTimes.push(i)
-    }
-    console.log(this.repeatTimes)
   };
 
   addRowOnBtnClick() {
