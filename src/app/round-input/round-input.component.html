@@ -1,5 +1,5 @@
 <div>
-    <form #handicapCalcForm="ngForm">
+    <form [formGroup]="roundForm">
 
         <!-- Round number -->
         <div class="form-group">
@@ -8,77 +8,36 @@
         </div>
 
         <!-- 18 hole score input -->
+        <!-- if you set a min here in the HTML the user can NOT enter a value below this number -->
+        <!-- might want to consider this instead of using validation for min in TS -->
         <div class="form-group">
             <label for="eighteenHoleScore">18 Hole Score</label>
-            <input id="eighteenHoleScore" type="number" name="eighteenHoleScore"
-                [(ngModel)]="userHandicapRounds.eighteenHoleScore"
-                #eighteenHoleRoundField="ngModel"
-                [class.field-error]="handicapCalcForm.submitted && eighteenHoleRoundField.invalid"
-                min="18"
-                required >
+            <input id="eighteenHoleScore" type="number" formControlName="eighteenHoleScore"
+                [ngClass]="{'is-invalid': 'numberMessage'}">
+            <br>
+            <span style="font-weight: bold; color: red;">{{ numberMessage }}</span>
         </div>
 
         <!-- 9 hole score input -->
         <div class="form-group">
             <label for="nineHoleScore">9 Hole Score</label>
-            <input id='nineHoleScore' type="number" name="nineHoleScore"
-                [(ngModel)]="userHandicapRounds.nineHoleScore"
-                #nineHoleRoundField="ngModel"
-                [class.field-error]="handicapCalcForm.submitted && nineHoleRoundField.invalid"
-                min="9"
-                required >
-        </div>
-
-        <!-- course rating input -->
-        <div class="form-group">
-            <label for="courseRating">Course Rating</label>
-            <input id='courseRating' type="number" name="courseRating"
-                [(ngModel)]="userHandicapRounds.courseRating"
-                #courseRatingField="ngModel"
-                [class.field-error]="handicapCalcForm.submitted && courseRatingField.invalid"
-                required >
-            <!-- <div [hidden]="!handicapCalcForm.submitted || courseRatingField.value !== 0"
-                class="alert alert-danger">
-                Enter a course rating of AT LEAST 1
-            </div> -->
-        </div>
-
-        <!-- slope rating input -->
-        <div class="form-group">
-            <label for="slopeRating">Slope Rating</label>
-            <input id='slopeRating' type="number" name="slopeRating"
-                [(ngModel)]="userHandicapRounds.slopeRating"
-                #slopeRatingField="ngModel"
-                [class.field-error]="handicapCalcForm.submitted && slopeRatingField.invalid"
-                required >
-        </div>
-
-        <!-- score differential input -->
-        <div class="form-group">
-            <label for="scoreDifferential">Score Differential</label>
-            <input id='scoreDifferential' type="number" name="scoreDifferential"
-                [(ngModel)]="userHandicapRounds.scoreDifferential"
-                #scoreDifferentialField="ngModel"
-                [class.field-error]="handicapCalcForm.submitted && scoreDifferentialField.invalid"
-                required >
+            <input id='nineHoleScore' type="number" formControlName="nineHoleScore">
         </div>
 
         <br>
 
         <!-- button needs to stay within form for validation to fire -->
-        <button (click)='calculateHandicapBtnClick()'>Calculate Handicap</button>
+        <!-- button is grayed out/disabled if the form isn't valid -->
+        <!-- In the future, this button should be grayed out IF the first 3 groupings are invalid -->
+        <button (click)='calculateHandicapBtnClick()' [disabled]="!roundForm.valid">Calculate Handicap</button>
 
     </form>
 
-    <br>
-
-    <h3>{{userHandicapRounds | json}}</h3>
-    <h3>Handicap Sum Is: {{handicapNumber}}</h3>
-
-
-<!-- 
-    <button (click) = 'addRowOnBtnClick()'>Add Row</button>
-    <button (click) = 'deleteRowOnBtnClick()' >Delete Row</button>
--->
-
 </div>
+<br>Dirty: {{roundForm.dirty}}
+<br>Touched: {{roundForm.touched}}
+<br>Valid: {{roundForm.valid}}
+<br>18 hole touched: {{roundForm.get('eighteenHoleScore')?.touched}}
+<br>18 hole dirty: {{roundForm.get('eighteenHoleScore')?.dirty}}
+<br>Value: {{roundForm.value | json}}
+<br>Round Total: {{roundTotal}}
