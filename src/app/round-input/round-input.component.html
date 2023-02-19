@@ -13,9 +13,9 @@
         <div class="form-group">
             <label for="eighteenHoleScore">18 Hole Score</label>
             <input id="eighteenHoleScore" type="number" formControlName="eighteenHoleScore"
-                [ngClass]="{'is-invalid': 'numberMessage'}">
+                [ngClass]="{'is-invalid': 'eighteenHoleValidationMsg'}">
             <br>
-            <span style="font-weight: bold; color: red;">{{ numberMessage }}</span>
+            <span style="font-weight: bold; color: red;">{{ eighteenHoleValidationMsg }}</span>
         </div>
 
         <!-- 9 hole score input -->
@@ -29,7 +29,9 @@
         <!-- button needs to stay within form for validation to fire -->
         <!-- button is grayed out/disabled if the form isn't valid -->
         <!-- In the future, this button should be grayed out IF the first 3 groupings are invalid -->
-        <button (click)='calculateHandicapBtnClick()' [disabled]="!roundForm.valid">Calculate Handicap</button>
+        <button (click)='calculateHandicapBtnClick()'>Calculate Handicap</button>
+        
+        <!-- <button (click)='calculateHandicapBtnClick()' [disabled]="!roundForm.valid">Calculate Handicap</button> -->
 
     </form>
 

@@ -12,11 +12,12 @@ export class RoundInputComponent implements OnInit {
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
   roundTotal: number;
-  numberMessage: string;
+  eighteenHoleValidationMsg: string;
 
   // must set the type to 'any' for this property otherwise you get an error when trying to use setMessages function
   validationMessages: any = {
-    required: 'Please enter a valid number'
+    required: 'Please enter a valid number',
+    min: 'Please enter a larger number'
   }
 
   constructor(private fb: FormBuilder) {
@@ -33,18 +34,18 @@ export class RoundInputComponent implements OnInit {
     })
 
     // display validation based on user input (only for 18 hole score)
-    const numberControl = this.roundForm.get('eighteenHoleScore');
-    numberControl?.valueChanges.subscribe(value => {
-      console.log(value);
-      this.setMessage(numberControl);
+    const eighteenHoleControl = this.roundForm.get('eighteenHoleScore');
+    eighteenHoleControl?.valueChanges.subscribe(value => {
+      // console.log(value);
+      this.setValidationMessage(eighteenHoleControl);
     })
   };
 
-  setMessage(c: AbstractControl): void {
-    this.numberMessage = '';
+  setValidationMessage(c: AbstractControl): void {
+    this.eighteenHoleValidationMsg = '';
     console.log(c);
     if ((c.touched || c.dirty) && c.errors) {
-      this.numberMessage = Object.keys(c.errors).map(
+      this.eighteenHoleValidationMsg = Object.keys(c.errors).map(
         key => this.validationMessages[key]).join(' ');
     }
   }
@@ -58,9 +59,16 @@ export class RoundInputComponent implements OnInit {
     // this will look for the form control in that specific form group >> this will be case sensitive
     const eighteeenHoleScore = this.roundForm.get('eighteenHoleScore')?.value
     const nineHoleScore = this.roundForm.get('nineHoleScore')?.value
-    this.roundTotal = eighteeenHoleScore + nineHoleScore
+    // this.roundTotal = eighteeenHoleScore + nineHoleScore
 
     console.log(`The sum of scores is: ${this.roundTotal}`);
+
+    if (this.roundForm.valid) {
+      console.log('form is valid, do calculation')
+      this.roundTotal = eighteeenHoleScore + nineHoleScore
+    } else {
+      console.log('run validation messages');
+    }
 
   }
 
