@@ -22,6 +22,8 @@
         <div class="form-group">
             <label for="nineHoleScore">9 Hole Score</label>
             <input id='nineHoleScore' type="number" formControlName="nineHoleScore">
+            <br>
+            <span style="font-weight: bold; color: red;">{{ nineHoleValidationMsg }}</span>
         </div>
 
         <br>
@@ -30,7 +32,7 @@
         <!-- button is grayed out/disabled if the form isn't valid -->
         <!-- In the future, this button should be grayed out IF the first 3 groupings are invalid -->
         <button (click)='calculateHandicapBtnClick()'>Calculate Handicap</button>
-        
+
         <!-- <button (click)='calculateHandicapBtnClick()' [disabled]="!roundForm.valid">Calculate Handicap</button> -->
 
     </form>

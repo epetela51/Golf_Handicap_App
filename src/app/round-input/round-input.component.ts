@@ -13,6 +13,9 @@ export class RoundInputComponent implements OnInit {
   roundForm: FormGroup;
   roundTotal: number;
   eighteenHoleValidationMsg: string;
+  nineHoleValidationMsg: string;
+  eighteenHoleRoundMin: number = 18;
+  nineHoleRoundMin: number = 9;
 
   // must set the type to 'any' for this property otherwise you get an error when trying to use setMessages function
   validationMessages: any = {
@@ -29,23 +32,26 @@ export class RoundInputComponent implements OnInit {
     this.roundForm = this.fb.group({
       // for a number, you can set 'null' as the default and that will leave the input field blank
       // you could also set the default value to 0 and the input will default to showing 0
-      eighteenHoleScore: [null, [Validators.required, Validators.min(18)]],
-      nineHoleScore: [null, [Validators.required, Validators.min(9)]]
+      eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin)]],
+      nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin)]]
     })
 
     // display validation based on user input (only for 18 hole score)
     const eighteenHoleControl = this.roundForm.get('eighteenHoleScore');
     eighteenHoleControl?.valueChanges.subscribe(value => {
-      // console.log(value);
-      this.setValidationMessage(eighteenHoleControl);
+      this.eighteenHoleValidationMsg = this.setValidationMessage(eighteenHoleControl, this.eighteenHoleValidationMsg);
+    })
+
+    const nineHoleControl = this.roundForm.get('nineHoleScore');
+    nineHoleControl?.valueChanges.subscribe(value => {
+      this.nineHoleValidationMsg = this.setValidationMessage(nineHoleControl, this.nineHoleValidationMsg);
     })
   };
 
-  setValidationMessage(c: AbstractControl): void {
-    this.eighteenHoleValidationMsg = '';
-    console.log(c);
-    if ((c.touched || c.dirty) && c.errors) {
-      this.eighteenHoleValidationMsg = Object.keys(c.errors).map(
+  setValidationMessage(control: AbstractControl, validationMsg: any): any {
+    validationMsg = '';
+    if ((control.touched || control.dirty) && control.errors) {
+      return validationMsg = Object.keys(control.errors).map(
         key => this.validationMessages[key]).join(' ');
     }
   }
