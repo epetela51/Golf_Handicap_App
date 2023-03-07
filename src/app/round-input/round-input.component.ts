@@ -29,11 +29,16 @@ export class RoundInputComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.roundForm = this.fb.group({
       eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin)]],
       nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin)]]
     })
 
+    this.displayValidation();
+  };
+
+  displayValidation() {
     // display validation based on user input (only for 18 hole score)
     const eighteenHoleControl = this.roundForm.get('eighteenHoleScore');
     eighteenHoleControl?.valueChanges.subscribe(value => {
@@ -44,7 +49,7 @@ export class RoundInputComponent implements OnInit {
     nineHoleControl?.valueChanges.subscribe(value => {
       this.nineHoleValidationMsg = this.setValidationMessage(nineHoleControl, this.nineHoleValidationMsg);
     })
-  };
+  }
 
   setValidationMessage(control: AbstractControl, validationMsg: any): any {
     validationMsg = '';
@@ -70,6 +75,14 @@ export class RoundInputComponent implements OnInit {
       console.log('run validation messages');
     }
 
+  }
+
+  addRound() {
+    console.log('Add a row');
+  }
+
+  removeRound() {
+    console.log('Remove a row');
   }
 
 }
