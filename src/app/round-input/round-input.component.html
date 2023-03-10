@@ -1,29 +1,34 @@
 <div>
     <form [formGroup]="roundForm">
+        <div formArrayName="roundInputs"
+            *ngFor="let round of roundInputs.controls; let i=index">
+            <div [formGroupName]="i">
 
-        <!-- Round number -->
-        <div class="form-group">
-            <label for="round_number">Round Number: </label>
-            <span id="round_number"> 1</span>
-        </div>
+                <!-- Round number -->
+                <div class="form-group">
+                    <label attr.for="{{'round_number' + i}}">Round Number: </label>
+                    <span id="{{'round_number' + i}}"> {{i+1}}</span>
+                </div>
 
-        <!-- 18 hole score input -->
-        <!-- if you set a min here in the HTML the user can NOT enter a value below this number -->
-        <!-- might want to consider this instead of using validation for min in TS -->
-        <div class="form-group">
-            <label for="eighteenHoleScore">18 Hole Score</label>
-            <input id="eighteenHoleScore" type="number" formControlName="eighteenHoleScore"
-                [ngClass]="{'is-invalid': 'eighteenHoleValidationMsg'}">
-            <br>
-            <span style="font-weight: bold; color: red;">{{ eighteenHoleValidationMsg }}</span>
-        </div>
+                <!-- 18 hole score input -->
+                <!-- if you set a min here in the HTML the user can NOT enter a value below this number -->
+                <!-- might want to consider this instead of using validation for min in TS -->
+                <div class="form-group">
+                    <label attr.for="{{'eighteenHoleScore' + i}}">18 Hole Score</label>
+                    <input id="{{'eighteenHoleScore' + i}}" type="number" formControlName="eighteenHoleScore"
+                        [ngClass]="{'is-invalid': 'eighteenHoleValidationMsg'}">
+                    <br>
+                    <span style="font-weight: bold; color: red;">{{ eighteenHoleValidationMsg }}</span>
+                </div>
 
-        <!-- 9 hole score input -->
-        <div class="form-group">
-            <label for="nineHoleScore">9 Hole Score</label>
-            <input id='nineHoleScore' type="number" formControlName="nineHoleScore">
-            <br>
-            <span style="font-weight: bold; color: red;">{{ nineHoleValidationMsg }}</span>
+                <!-- 9 hole score input -->
+                <div class="form-group">
+                    <label attr.for="{{'nineHoleScore' + i}}">9 Hole Score</label>
+                    <input id="{{'nineHoleScore' + i}}" type="number" formControlName="nineHoleScore">
+                    <br>
+                    <span style="font-weight: bold; color: red;">{{ nineHoleValidationMsg }}</span>
+                </div>
+            </div>
         </div>
 
         <br>
@@ -34,6 +39,7 @@
         <button (click)='calculateHandicapBtnClick()'>Calculate Handicap</button>
         <br>
         <br>
+        <!-- [disabled]="!roundInputs.valid" ==> makes button disabled unless everything is valid -->
         <button (click)='addRound()'>Add Round</button>
 
         <br>
@@ -45,10 +51,7 @@
     </form>
 
 </div>
-<br>Dirty: {{roundForm.dirty}}
-<br>Touched: {{roundForm.touched}}
-<br>Valid: {{roundForm.valid}}
-<br>18 hole touched: {{roundForm.get('eighteenHoleScore')?.touched}}
-<br>18 hole dirty: {{roundForm.get('eighteenHoleScore')?.dirty}}
-<br>Value: {{roundForm.value | json}}
+<br>18 hole Score: {{roundInputs.get('0.eighteenHoleScore')?.value}}
+<br>Entire Form Value: {{roundForm.value | json}}
+<br>Entire Form Valid: {{roundForm.valid}}
 <br>Round Total: {{roundTotal}}

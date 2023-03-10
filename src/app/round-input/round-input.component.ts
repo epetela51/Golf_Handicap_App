@@ -1,3 +1,4 @@
+import { FormatWidth } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl, FormArray } from "@angular/forms";
 // import { Round } from '../data/user-handicap-modal';
@@ -14,8 +15,12 @@ export class RoundInputComponent implements OnInit {
   roundTotal: number;
   eighteenHoleValidationMsg: string;
   nineHoleValidationMsg: string;
-  eighteenHoleRoundMin: number = 18;
-  nineHoleRoundMin: number = 9;
+  eighteenHoleRoundMin: number = 1;
+  nineHoleRoundMin: number = 1;
+
+  get roundInputs(): FormArray{
+    return <FormArray>this.roundForm.get('roundInputs')
+  }
 
   // must set the type to 'any' for this property otherwise you get an error when trying to use setMessages function
   validationMessages: any = {
@@ -31,12 +36,18 @@ export class RoundInputComponent implements OnInit {
   ngOnInit(): void {
 
     this.roundForm = this.fb.group({
-      eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin)]],
-      nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin)]]
+      roundInputs: this.fb.array([ this.buildRoundForm() ])
     })
 
     this.displayValidation();
   };
+
+  buildRoundForm() : FormGroup {
+    return this.fb.group({
+      eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin)]],
+      nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin)]]
+    })
+  }
 
   displayValidation() {
     // display validation based on user input (only for 18 hole score)
@@ -62,10 +73,11 @@ export class RoundInputComponent implements OnInit {
   // will PROBABLY need to use this method to calculate the handicap and display it on the screen
   calculateHandicapBtnClick() {
     console.log(this.roundForm);
-    console.log(`18 Hole Score value: ${this.roundForm.get('eighteenHoleScore')?.value}`);
+    console.log(this.roundInputs);
+    console.log(`18 Hole Score value: ${this.roundInputs.get('0.eighteenHoleScore')?.value}`);
 
-    const eighteeenHoleScore = this.roundForm.get('eighteenHoleScore')?.value
-    const nineHoleScore = this.roundForm.get('nineHoleScore')?.value
+    const eighteeenHoleScore = this.roundInputs.get('0.eighteenHoleScore')?.value
+    const nineHoleScore = this.roundInputs.get('0.nineHoleScore')?.value
 
     if (this.roundForm.valid) {
       console.log('form is valid, do calculation')
@@ -78,7 +90,7 @@ export class RoundInputComponent implements OnInit {
   }
 
   addRound() {
-    console.log('Add a row');
+    this.roundInputs.push(this.buildRoundForm())
   }
 
   removeRound() {
