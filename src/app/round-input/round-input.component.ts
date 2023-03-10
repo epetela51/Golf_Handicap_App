@@ -15,8 +15,8 @@ export class RoundInputComponent implements OnInit {
   roundTotal: number;
   eighteenHoleValidationMsg: string;
   nineHoleValidationMsg: string;
-  eighteenHoleRoundMin: number = 1;
-  nineHoleRoundMin: number = 1;
+  eighteenHoleRoundMin: number = 2;
+  nineHoleRoundMin: number = 2;
 
   get roundInputs(): FormArray{
     return <FormArray>this.roundForm.get('roundInputs')
@@ -51,12 +51,12 @@ export class RoundInputComponent implements OnInit {
 
   displayValidation() {
     // display validation based on user input (only for 18 hole score)
-    const eighteenHoleControl = this.roundForm.get('eighteenHoleScore');
+    const eighteenHoleControl = this.roundInputs.get('0.eighteenHoleScore');
     eighteenHoleControl?.valueChanges.subscribe(value => {
       this.eighteenHoleValidationMsg = this.setValidationMessage(eighteenHoleControl, this.eighteenHoleValidationMsg);
     })
 
-    const nineHoleControl = this.roundForm.get('nineHoleScore');
+    const nineHoleControl = this.roundInputs.get('0.nineHoleScore');
     nineHoleControl?.valueChanges.subscribe(value => {
       this.nineHoleValidationMsg = this.setValidationMessage(nineHoleControl, this.nineHoleValidationMsg);
     })
