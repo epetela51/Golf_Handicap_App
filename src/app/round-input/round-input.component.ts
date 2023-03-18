@@ -1,4 +1,3 @@
-import { FormatWidth } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl, FormArray } from "@angular/forms";
 // import { Round } from '../data/user-handicap-modal';
@@ -12,7 +11,7 @@ export class RoundInputComponent implements OnInit {
 
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
-  roundTotal: number;
+  roundTotal: number[] = [];
   eighteenHoleValidationMsg: string;
   nineHoleValidationMsg: string;
   eighteenHoleRoundMin: number = 2;
@@ -39,7 +38,7 @@ export class RoundInputComponent implements OnInit {
       roundInputs: this.fb.array([ this.buildRoundForm() ])
     })
 
-    this.displayValidation();
+    // this.displayValidation();
   };
 
   buildRoundForm() : FormGroup {
@@ -50,7 +49,7 @@ export class RoundInputComponent implements OnInit {
   }
 
   displayValidation() {
-    // display validation based on user input (only for 18 hole score)
+    // display validation based on user input
     const eighteenHoleControl = this.roundInputs.get('0.eighteenHoleScore');
     eighteenHoleControl?.valueChanges.subscribe(value => {
       this.eighteenHoleValidationMsg = this.setValidationMessage(eighteenHoleControl, this.eighteenHoleValidationMsg);
@@ -72,21 +71,22 @@ export class RoundInputComponent implements OnInit {
 
   // will PROBABLY need to use this method to calculate the handicap and display it on the screen
   calculateHandicapBtnClick() {
+    // reset the array holding the sums otherwise the array can double when doing a calc, adding a round and then doing another clac
+    this.roundTotal = [];
+
     console.log(this.roundForm);
     console.log(this.roundInputs);
-    console.log(`18 Hole Score value: ${this.roundInputs.get('0.eighteenHoleScore')?.value}`);
 
-    const eighteeenHoleScore = this.roundInputs.get('0.eighteenHoleScore')?.value
-    const nineHoleScore = this.roundInputs.get('0.nineHoleScore')?.value
+    let eighteeenHoleScore;
+    let nineHoleScore;
 
-    if (this.roundForm.valid) {
-      console.log('form is valid, do calculation')
-      this.roundTotal = eighteeenHoleScore + nineHoleScore
-      console.log(`The sum of scores is: ${this.roundTotal}`);
-    } else {
-      console.log('run validation messages');
-    }
+    this.roundInputs.controls.forEach((data) => {
+      eighteeenHoleScore = data.get('eighteenHoleScore')?.value
+      nineHoleScore = data.get('nineHoleScore')?.value
+      this.roundTotal.push(eighteeenHoleScore + nineHoleScore)
 
+    })
+    console.log(this.roundTotal);
   }
 
   addRound() {

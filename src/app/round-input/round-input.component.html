@@ -28,6 +28,16 @@
                     <br>
                     <span style="font-weight: bold; color: red;">{{ nineHoleValidationMsg }}</span>
                 </div>
+
+                <!-- Round Sum -->
+                <div *ngFor="let total of roundTotal; let sumCount = index">
+                    <!-- used to prevent multiple sums showing for a single round -->
+                    <div *ngIf="i === sumCount">
+                        Sum: {{total}}
+                    </div>
+                </div>
+                <br>
+
             </div>
         </div>
 
