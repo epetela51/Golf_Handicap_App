@@ -1,21 +1,21 @@
 <div>
     <form [formGroup]="roundForm">
         <div formArrayName="roundInputs"
-            *ngFor="let round of roundInputs.controls; let i=index">
-            <div [formGroupName]="i">
+            *ngFor="let round of roundInputs.controls; let roundCount=index">
+            <div [formGroupName]="roundCount">
 
                 <!-- Round number -->
                 <div class="form-group">
-                    <label attr.for="{{'round_number' + i}}">Round Number: </label>
-                    <span id="{{'round_number' + i}}"> {{i+1}}</span>
+                    <label attr.for="{{'round_number' + roundCount}}">Round Number: </label>
+                    <span id="{{'round_number' + roundCount}}"> {{roundCount+1}}</span>
                 </div>
 
                 <!-- 18 hole score input -->
                 <!-- if you set a min here in the HTML the user can NOT enter a value below this number -->
                 <!-- might want to consider this instead of using validation for min in TS -->
                 <div class="form-group">
-                    <label attr.for="{{'eighteenHoleScore' + i}}">18 Hole Score</label>
-                    <input id="{{'eighteenHoleScore' + i}}" type="number" formControlName="eighteenHoleScore"
+                    <label attr.for="{{'eighteenHoleScore' + roundCount}}">18 Hole Score</label>
+                    <input id="{{'eighteenHoleScore' + roundCount}}" type="number" formControlName="eighteenHoleScore"
                         [ngClass]="{'is-invalid': 'eighteenHoleValidationMsg'}">
                     <br>
                     <span style="font-weight: bold; color: red;">{{ eighteenHoleValidationMsg }}</span>
@@ -23,8 +23,8 @@
 
                 <!-- 9 hole score input -->
                 <div class="form-group">
-                    <label attr.for="{{'nineHoleScore' + i}}">9 Hole Score</label>
-                    <input id="{{'nineHoleScore' + i}}" type="number" formControlName="nineHoleScore">
+                    <label attr.for="{{'nineHoleScore' + roundCount}}">9 Hole Score</label>
+                    <input id="{{'nineHoleScore' + roundCount}}" type="number" formControlName="nineHoleScore">
                     <br>
                     <span style="font-weight: bold; color: red;">{{ nineHoleValidationMsg }}</span>
                 </div>
@@ -32,7 +32,7 @@
                 <!-- Round Sum -->
                 <div *ngFor="let total of roundTotal; let sumCount = index">
                     <!-- used to prevent multiple sums showing for a single round -->
-                    <div *ngIf="i === sumCount">
+                    <div *ngIf="roundCount === sumCount">
                         Sum: {{total}}
                     </div>
                 </div>
