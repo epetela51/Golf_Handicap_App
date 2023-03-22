@@ -30,18 +30,21 @@
                 </div>
 
                 <!-- Round Sum -->
-                <div *ngFor="let total of roundTotal; let sumCount = index">
-                    <!-- used to prevent multiple sums showing for a single round -->
-                    <div *ngIf="roundCount === sumCount">
-                        Sum: {{total}}
-                    </div>
+                <div>
+                    Sum: 
+                    <span *ngFor="let total of roundTotal; let sumCount = index">
+                        <!-- used to prevent multiple sums showing for a single round -->
+                        <span *ngIf="roundCount === sumCount">
+                            {{total}}
+                        </span>
+                    </span>
                 </div>
-                <br>
 
             </div>
-        </div>
 
-        <br>
+            <br>
+            
+        </div>
 
         <!-- button needs to stay within form for validation to fire -->
         <!-- button is grayed out/disabled if the form isn't valid -->
