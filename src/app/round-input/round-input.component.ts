@@ -38,6 +38,8 @@ export class RoundInputComponent implements OnInit {
       roundInputs: this.fb.array([ this.buildRoundForm() ])
     })
 
+    console.log(this.roundInputs.controls)
+
     // this.displayValidation();
   };
 
@@ -80,9 +82,9 @@ export class RoundInputComponent implements OnInit {
     let eighteeenHoleScore;
     let nineHoleScore;
 
-    this.roundInputs.controls.forEach((data) => {
-      eighteeenHoleScore = data.get('eighteenHoleScore')?.value
-      nineHoleScore = data.get('nineHoleScore')?.value
+    this.roundInputs.controls.forEach((control) => {
+      eighteeenHoleScore = control.get('eighteenHoleScore')?.value
+      nineHoleScore = control.get('nineHoleScore')?.value
       this.roundTotal.push(eighteeenHoleScore + nineHoleScore)
 
     })
@@ -91,6 +93,8 @@ export class RoundInputComponent implements OnInit {
 
   addRound() {
     this.roundInputs.push(this.buildRoundForm())
+    console.log(this.roundInputs.controls)
+
   }
 
   removeRound() {
