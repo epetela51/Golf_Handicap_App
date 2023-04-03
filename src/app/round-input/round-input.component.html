@@ -1,26 +1,70 @@
-<!-- <p style="text-decoration: underline; color: red;">Round input table goes here (round-input component)</p> -->
-
 <div>
-    <table>
-        <thead>
-            <tr>
-                <th *ngFor="let header of tableHeaders">{{header}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let row of rows index as i">
-                <!-- index is used to track the round number -->
-                <td>{{i+1}}</td>
-                <!-- slice is used to start the iteration at position 1 (since there is no input in column position 0) -->
-                <td *ngFor="let column of tableHeaders | slice:1"><label for='round'></label><input type='number' value='0' id='round' required></td>
-            </tr>
-        </tbody>
-    </table>
+    <form [formGroup]="roundForm">
+        <div formArrayName="roundInputs"
+            *ngFor="let round of roundInputs.controls; let roundCount=index">
+            <div [formGroupName]="roundCount">
 
-    <br>
+                <!-- Round number -->
+                <div class="form-group">
+                    <label attr.for="{{'round_number' + roundCount}}">Round Number: </label>
+                    <span id="{{'round_number' + roundCount}}"> {{roundCount+1}}</span>
+                </div>
 
-    <button>Calculate Handicap</button>
-    <button (click) = 'addRowOnBtnClick()'>Add Row</button>
-    <button (click) = 'deleteRowOnBtnClick()' >Delete Row</button>
+                <!-- 18 hole score input -->
+                <!-- if you set a min here in the HTML the user can NOT enter a value below this number -->
+                <!-- might want to consider this instead of using validation for min in TS -->
+                <div class="form-group">
+                    <label attr.for="{{'eighteenHoleScore' + roundCount}}">18 Hole Score</label>
+                    <input id="{{'eighteenHoleScore' + roundCount}}" type="number" formControlName="eighteenHoleScore"
+                        [ngClass]="{'is-invalid': 'eighteenHoleValidationMsg'}">
+                    <br>
+                    <span style="font-weight: bold; color: red;">{{ eighteenHoleValidationMsg }}</span>
+                </div>
+
+                <!-- 9 hole score input -->
+                <div class="form-group">
+                    <label attr.for="{{'nineHoleScore' + roundCount}}">9 Hole Score</label>
+                    <input id="{{'nineHoleScore' + roundCount}}" type="number" formControlName="nineHoleScore">
+                    <br>
+                    <span style="font-weight: bold; color: red;">{{ nineHoleValidationMsg }}</span>
+                </div>
+
+                <!-- Round Sum -->
+                <div>
+                    Sum: 
+                    <span *ngFor="let total of roundTotal; let sumCount = index">
+                        <!-- used to prevent multiple sums showing for a single round -->
+                        <span *ngIf="roundCount === sumCount">
+                            {{total}}
+                        </span>
+                    </span>
+                </div>
+
+            </div>
+
+            <br>
+            
+        </div>
+
+        <!-- button needs to stay within form for validation to fire -->
+        <!-- button is grayed out/disabled if the form isn't valid -->
+        <!-- In the future, this button should be grayed out IF the first 3 groupings are invalid -->
+        <button (click)='calculateHandicapBtnClick()'>Calculate Handicap</button>
+        <br>
+        <br>
+        <!-- [disabled]="!roundInputs.valid" ==> makes button disabled unless everything is valid -->
+        <button (click)='addRound()'>Add Round</button>
+
+        <br>
+        <br>
+        <button (click)='removeRound()'>Remove Last Round</button>
+
+        <!-- <button (click)='calculateHandicapBtnClick()' [disabled]="!roundForm.valid">Calculate Handicap</button> -->
+
+    </form>
 
 </div>
+<br>18 hole Score: {{roundInputs.get('0.eighteenHoleScore')?.value}}
+<br>Entire Form Value: {{roundForm.value | json}}
+<br>Entire Form Valid: {{roundForm.valid}}
+<br>Round Total: {{roundTotal}}

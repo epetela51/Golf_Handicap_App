@@ -1,0 +1,4 @@
+/* puts a border around the input box if NOT valid */
+.field-error {
+    border: 1px solid red;
+}

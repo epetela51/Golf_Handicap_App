@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, AbstractControl, FormArray } from "@angular/forms";
+// import { Round } from '../data/user-handicap-modal';
 
 @Component({
   selector: 'app-round-input',
@@ -7,46 +9,101 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RoundInputComponent implements OnInit {
 
-  tableHeaders: string [] = [
-    'Round Number',
-    '18 Hole Score',
-    '9 Hole Score',
-    'Course Rating',
-    'Slope Rating',
-    'Score Differential'
-  ]
+  // defines form model. Template will bind to this root form model
+  roundForm: FormGroup;
+  roundTotal: number[] = [];
+  eighteenHoleValidationMsg: string;
+  nineHoleValidationMsg: string;
+  eighteenHoleRoundMin: number = 2;
+  nineHoleRoundMin: number = 2;
 
-// improve this into one array???
-  rows: string[] = [
-    'number',
-    'number',
-    'number',
-  ]
+  get roundInputs(): FormArray{
+    return <FormArray>this.roundForm.get('roundInputs')
+  }
 
-  constructor() { 
+  // must set the type to 'any' for this property otherwise you get an error when trying to use setMessages function
+  validationMessages: any = {
+    required: 'Please enter a valid number',
+
+    // DYNAMICALLY ADD A NUMBER TO THIS MIN SO IT SAYS 'PLEASE ENTER A NUMBER LARGER THAN (X)'??????
+    min: 'Please enter a larger number'
+  }
+
+  constructor(private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
+
+    this.roundForm = this.fb.group({
+      roundInputs: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
+    })
+
+    // this.displayValidation();
   };
 
-  addRowOnBtnClick() {
-    if (this.rows.length <= 19) {
-      this.rows.push('number')
-    } else {
-      // alert being used as a placeholder
-      // replace with disabling the button?? Event Binding to do this??
-      alert('Can\'t have more than 20 total rounds')
+  buildRoundForm() : FormGroup {
+    const roundFormGroup = this.fb.group({
+      eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin)]],
+      nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin)]]
+    })
+    
+    roundFormGroup.statusChanges.subscribe(data => {
+      if (data === 'VALID') {
+        this.calcScoreDifferential()
+      }
+    })
+
+    return roundFormGroup
+  }
+
+  calcScoreDifferential() {
+    // reset the array holding the sums otherwise the array can double when doing a calc, adding a round and then doing another clac
+    this.roundTotal = [];
+
+    let eighteeenHoleScore;
+    let nineHoleScore;
+
+    this.roundInputs.controls.forEach((control) => {
+      eighteeenHoleScore = control.get('eighteenHoleScore')?.value
+      nineHoleScore = control.get('nineHoleScore')?.value
+      this.roundTotal.push(eighteeenHoleScore + nineHoleScore)
+    })
+  }
+
+  displayValidation() {
+    // display validation based on user input
+    const eighteenHoleControl = this.roundInputs.get('0.eighteenHoleScore');
+    eighteenHoleControl?.valueChanges.subscribe(value => {
+      this.eighteenHoleValidationMsg = this.setValidationMessage(eighteenHoleControl, this.eighteenHoleValidationMsg);
+    })
+
+    const nineHoleControl = this.roundInputs.get('0.nineHoleScore');
+    nineHoleControl?.valueChanges.subscribe(value => {
+      this.nineHoleValidationMsg = this.setValidationMessage(nineHoleControl, this.nineHoleValidationMsg);
+    })
+  }
+
+  setValidationMessage(control: AbstractControl, validationMsg: any): any {
+    validationMsg = '';
+    if ((control.touched || control.dirty) && control.errors) {
+      return validationMsg = Object.keys(control.errors).map(
+        key => this.validationMessages[key]).join(' ');
     }
   }
 
-  deleteRowOnBtnClick() {
-    if (this.rows.length > 3) {
-      this.rows.pop();
-    } else {
-      // alert being used as a placeholder
-      // replace with disabling the button?? Event Binding to do this??
-      alert('Need a minimum of 3 rounds')
-    }
+  // will PROBABLY need to use this method to calculate the handicap and display it on the screen
+  calculateHandicapBtnClick() {
+    console.log('calculate handicap and display')
+  }
+
+  addRound() {
+    this.roundInputs.push(this.buildRoundForm())
+    console.log(this.roundInputs.controls)
+
+  }
+
+  removeRound() {
+    console.log('Remove a row');
   }
 
 }
