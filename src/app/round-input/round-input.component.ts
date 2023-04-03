@@ -35,18 +35,38 @@ export class RoundInputComponent implements OnInit {
   ngOnInit(): void {
 
     this.roundForm = this.fb.group({
-      roundInputs: this.fb.array([ this.buildRoundForm() ])
+      roundInputs: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
     })
-
-    console.log(this.roundInputs.controls)
 
     // this.displayValidation();
   };
 
   buildRoundForm() : FormGroup {
-    return this.fb.group({
+    const roundFormGroup = this.fb.group({
       eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin)]],
       nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin)]]
+    })
+    
+    roundFormGroup.statusChanges.subscribe(data => {
+      if (data === 'VALID') {
+        this.calcScoreDifferential()
+      }
+    })
+
+    return roundFormGroup
+  }
+
+  calcScoreDifferential() {
+    // reset the array holding the sums otherwise the array can double when doing a calc, adding a round and then doing another clac
+    this.roundTotal = [];
+
+    let eighteeenHoleScore;
+    let nineHoleScore;
+
+    this.roundInputs.controls.forEach((control) => {
+      eighteeenHoleScore = control.get('eighteenHoleScore')?.value
+      nineHoleScore = control.get('nineHoleScore')?.value
+      this.roundTotal.push(eighteeenHoleScore + nineHoleScore)
     })
   }
 
@@ -73,22 +93,7 @@ export class RoundInputComponent implements OnInit {
 
   // will PROBABLY need to use this method to calculate the handicap and display it on the screen
   calculateHandicapBtnClick() {
-    // reset the array holding the sums otherwise the array can double when doing a calc, adding a round and then doing another clac
-    this.roundTotal = [];
-
-    console.log(this.roundForm);
-    console.log(this.roundInputs);
-
-    let eighteeenHoleScore;
-    let nineHoleScore;
-
-    this.roundInputs.controls.forEach((control) => {
-      eighteeenHoleScore = control.get('eighteenHoleScore')?.value
-      nineHoleScore = control.get('nineHoleScore')?.value
-      this.roundTotal.push(eighteeenHoleScore + nineHoleScore)
-
-    })
-    console.log(this.roundTotal);
+    console.log('calculate handicap and display')
   }
 
   addRound() {
