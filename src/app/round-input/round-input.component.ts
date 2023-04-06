@@ -48,9 +48,7 @@ export class RoundInputComponent implements OnInit {
     })
     
     roundFormGroup.statusChanges.subscribe(data => {
-      if (data === 'VALID') {
-        this.calcScoreDifferential()
-      }
+      this.calcScoreDifferential();
     })
 
     return roundFormGroup
@@ -62,11 +60,18 @@ export class RoundInputComponent implements OnInit {
 
     let eighteeenHoleScore;
     let nineHoleScore;
+    let total;
 
     this.roundInputs.controls.forEach((control) => {
-      eighteeenHoleScore = control.get('eighteenHoleScore')?.value
-      nineHoleScore = control.get('nineHoleScore')?.value
-      this.roundTotal.push(eighteeenHoleScore + nineHoleScore)
+      if (control.status === 'VALID') {
+        eighteeenHoleScore = control.get('eighteenHoleScore')?.value
+        nineHoleScore = control.get('nineHoleScore')?.value
+        total = eighteeenHoleScore + nineHoleScore
+        this.roundTotal.push(total)
+      } else {
+        total = 0;
+        this.roundTotal.push(total)
+      }
     })
   }
 
