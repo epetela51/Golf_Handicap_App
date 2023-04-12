@@ -105,7 +105,6 @@ export class RoundInputComponent implements OnInit {
     this.roundInputs.push(this.buildRoundForm())
     console.log(this.roundInputs.controls)
     this.roundTotal.push(0)
-    console.log(this.roundTotal)
   }
 
   removeRound() {
