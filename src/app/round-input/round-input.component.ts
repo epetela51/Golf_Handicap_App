@@ -11,7 +11,7 @@ export class RoundInputComponent implements OnInit {
 
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
-  roundTotal: number[] = [];
+  roundTotal: number[] = [0, 0, 0];
   eighteenHoleValidationMsg: string;
   nineHoleValidationMsg: string;
   eighteenHoleRoundMin: number = 2;
@@ -104,7 +104,7 @@ export class RoundInputComponent implements OnInit {
   addRound() {
     this.roundInputs.push(this.buildRoundForm())
     console.log(this.roundInputs.controls)
-
+    this.roundTotal.push(0)
   }
 
   removeRound() {
