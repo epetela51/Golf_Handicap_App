@@ -102,13 +102,22 @@ export class RoundInputComponent implements OnInit {
   }
 
   addRound() {
-    this.roundInputs.push(this.buildRoundForm())
-    console.log(this.roundInputs.controls)
-    this.roundTotal.push(0)
+    if (this.roundInputs.length < 20) {
+      this.roundInputs.push(this.buildRoundForm())
+      this.roundTotal.push(0)
+    } else {
+      alert('Maximum of 20 rounds allowed');
+    }
+
   }
 
   removeRound() {
-    console.log('Remove a row');
+    if (this.roundInputs.length > 3) {
+      this.roundInputs.removeAt(-1)
+      this.roundTotal.pop()
+    } else {
+      alert('Minimum of 3 rounds are required');
+    }
   }
 
 }
