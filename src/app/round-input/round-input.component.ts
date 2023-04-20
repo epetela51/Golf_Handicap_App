@@ -16,6 +16,7 @@ export class RoundInputComponent implements OnInit {
   nineHoleValidationMsg: string;
   eighteenHoleRoundMin: number = 2;
   nineHoleRoundMin: number = 2;
+  handicapIndex:  number = 0;
 
   get roundInputs(): FormArray{
     return <FormArray>this.roundForm.get('roundInputs')
@@ -98,7 +99,12 @@ export class RoundInputComponent implements OnInit {
 
   // will PROBABLY need to use this method to calculate the handicap and display it on the screen
   calculateHandicapBtnClick() {
-    console.log('calculate handicap and display')
+    let tempSum = 0;
+    this.roundTotal.forEach((sum) => {
+      tempSum += sum
+    })
+    // toFixed makes it a string so need to convert it back to a number using Number()
+    this.handicapIndex = Number((tempSum / this.roundTotal.length).toFixed(1))
   }
 
   addRound() {
