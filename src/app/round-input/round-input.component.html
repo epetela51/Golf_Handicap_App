@@ -46,10 +46,12 @@
             
         </div>
 
-        <!-- button needs to stay within form for validation to fire -->
-        <!-- button is grayed out/disabled if the form isn't valid -->
-        <!-- In the future, this button should be grayed out IF the first 3 groupings are invalid -->
-        <button (click)='calculateHandicapBtnClick()'>Calculate Handicap</button>
+        <button (click)='removeRound()'>Remove Last Round</button>
+
+        <br>
+        <br>
+        <button (click)='resetAllRounds()'>Reset Form</button>
+
         <br>
         <br>
         <!-- [disabled]="!roundInputs.valid" ==> makes button disabled unless everything is valid -->
@@ -57,14 +59,21 @@
 
         <br>
         <br>
-        <button (click)='removeRound()'>Remove Last Round</button>
+
+        <!-- button needs to stay within form for validation to fire -->
+        <!-- button is grayed out/disabled if the form isn't valid -->
+        <!-- In the future, this button should be grayed out IF the first 3 groupings are invalid -->
+        <button (click)='calculateHandicapBtnClick()'>Calculate Handicap</button>
 
         <!-- <button (click)='calculateHandicapBtnClick()' [disabled]="!roundForm.valid">Calculate Handicap</button> -->
 
     </form>
 
+    <br>
+    
+    <div>
+        <!-- use interpolation to put the total here -->
+        <p>Your Handicap Index: <span>{{handicapIndex}}</span> </p>
+    </div>
+
 </div>
-<br>18 hole Score: {{roundInputs.get('0.eighteenHoleScore')?.value}}
-<br>Entire Form Value: {{roundForm.value | json}}
-<br>Entire Form Valid: {{roundForm.valid}}
-<br>Round Total: {{roundTotal}}

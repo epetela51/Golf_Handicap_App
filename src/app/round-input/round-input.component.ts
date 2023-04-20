@@ -16,6 +16,7 @@ export class RoundInputComponent implements OnInit {
   nineHoleValidationMsg: string;
   eighteenHoleRoundMin: number = 2;
   nineHoleRoundMin: number = 2;
+  handicapIndex:  number = 0;
 
   get roundInputs(): FormArray{
     return <FormArray>this.roundForm.get('roundInputs')
@@ -98,7 +99,12 @@ export class RoundInputComponent implements OnInit {
 
   // will PROBABLY need to use this method to calculate the handicap and display it on the screen
   calculateHandicapBtnClick() {
-    console.log('calculate handicap and display')
+    let tempSum = 0;
+    this.roundTotal.forEach((sum) => {
+      tempSum += sum
+    })
+    // toFixed makes it a string so need to convert it back to a number using Number()
+    this.handicapIndex = Number((tempSum / this.roundTotal.length).toFixed(1))
   }
 
   addRound() {
@@ -118,6 +124,15 @@ export class RoundInputComponent implements OnInit {
     } else {
       alert('Minimum of 3 rounds are required');
     }
+  }
+
+  resetAllRounds() {
+    console.log('reset all rounds')
+    this.roundForm.reset()
+    // re-binding the formGroup will re-set the form array and the number of formControls back to it's default of 3
+    this.roundForm = this.fb.group({
+      roundInputs: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
+    })
   }
 
 }
