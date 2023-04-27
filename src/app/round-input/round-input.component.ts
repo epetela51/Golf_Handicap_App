@@ -48,7 +48,7 @@ export class RoundInputComponent implements OnInit {
       nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin)]]
     })
     
-    roundFormGroup.statusChanges.subscribe(data => {
+    roundFormGroup.statusChanges.subscribe(status => {
       this.calcScoreDifferential();
     })
 
