@@ -17,6 +17,7 @@ export class RoundInputComponent implements OnInit {
   eighteenHoleRoundMin: number = 2;
   nineHoleRoundMin: number = 2;
   handicapIndex:  number = 0;
+  calcBtnDisabled: boolean = false;
 
   get roundInputs(): FormArray{
     return <FormArray>this.roundForm.get('roundInputs')
@@ -47,8 +48,14 @@ export class RoundInputComponent implements OnInit {
       eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin)]],
       nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin)]]
     })
+
+    roundFormGroup.valueChanges.subscribe(value => {
+      if (this.calcBtnDisabled && value) {
+        this.calcBtnDisabled = false;
+      }
+    })
     
-    roundFormGroup.statusChanges.subscribe(data => {
+    roundFormGroup.statusChanges.subscribe(status => {
       this.calcScoreDifferential();
     })
 
@@ -99,6 +106,8 @@ export class RoundInputComponent implements OnInit {
 
   // will PROBABLY need to use this method to calculate the handicap and display it on the screen
   calculateHandicapBtnClick() {
+    this.calcBtnDisabled = true;
+
     let tempSum = 0;
     this.roundTotal.forEach((sum) => {
       tempSum += sum
@@ -124,6 +133,7 @@ export class RoundInputComponent implements OnInit {
     } else {
       alert('Minimum of 3 rounds are required');
     }
+    this.calcBtnDisabled = false;
   }
 
   resetAllRounds() {
