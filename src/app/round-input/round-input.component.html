@@ -59,7 +59,10 @@
         <br>
         <br>
 
-        <button (click)='calculateHandicapBtnClick()' [disabled]="!roundForm.valid" >Calculate Handicap</button>
+        <button (click)='calculateHandicapBtnClick()'
+            [disabled]="calcBtnDisabled || !roundForm.valid" >
+            Calculate Handicap
+        </button>
 
     </form>
 
