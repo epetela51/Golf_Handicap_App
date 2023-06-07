@@ -137,12 +137,12 @@ export class RoundInputComponent implements OnInit {
   }
 
   resetAllRounds() {
-    console.log('reset all rounds')
     this.roundForm.reset()
     // re-binding the formGroup will re-set the form array and the number of formControls back to it's default of 3
     this.roundForm = this.fb.group({
       roundInputs: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
     })
+    this.handicapIndex = 0;
   }
 
 }
