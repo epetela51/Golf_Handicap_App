@@ -18,6 +18,7 @@ export class RoundInputComponent implements OnInit {
   nineHoleRoundMin: number = 2;
   handicapIndex:  number = 0;
   calcBtnDisabled: boolean = false;
+  recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
 
   get roundInputs(): FormArray{
     return <FormArray>this.roundForm.get('roundInputs')
