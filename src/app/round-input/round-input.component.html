@@ -67,7 +67,7 @@
     <br>
     
     <div>
-        <!-- use interpolation to put the total here -->
+        <p *ngIf="!calcBtnDisabled && handicapIndex !== 0">{{recalcHandicapMsg}}</p>
         <p>Your Handicap Index: <span>{{handicapIndex}}</span> </p>
     </div>
 
