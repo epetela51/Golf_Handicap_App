@@ -13,17 +13,18 @@
                 <!-- 18 hole score input -->
                 <div class="form-group">
                     <label attr.for="{{'eighteenHoleScore' + roundCount}}">18 Hole Score</label>
-                    <input id="{{'eighteenHoleScore' + roundCount}}" type="number" formControlName="eighteenHoleScore" min="2">
+                    <input id="{{'eighteenHoleScore' + roundCount}}" type="number" formControlName="eighteenHoleScore" min="18">
                     <br>
-                    <span style="font-weight: bold; color: red;">{{ eighteenHoleValidationMsg }}</span>
+                    <span *ngIf="round.get('eighteenHoleScore')?.errors?.['eighteenInvalid']" style="font-weight: bold; color: red;">Enter in a round of at least 18</span>
+                    <!-- {{round.value | json}} -->
                 </div>
 
                 <!-- 9 hole score input -->
                 <div class="form-group">
                     <label attr.for="{{'nineHoleScore' + roundCount}}">9 Hole Score</label>
-                    <input id="{{'nineHoleScore' + roundCount}}" type="number" formControlName="nineHoleScore" min="2">
+                    <input id="{{'nineHoleScore' + roundCount}}" type="number" formControlName="nineHoleScore" min="9">
                     <br>
-                    <span style="font-weight: bold; color: red;">{{ nineHoleValidationMsg }}</span>
+                    <span *ngIf="round.get('nineHoleScore')?.errors?.['nineInvalid']" style="font-weight: bold; color: red;">Enter in a round of at least 9</span>
                 </div>
 
                 <!-- Round Sum -->
