@@ -19,17 +19,19 @@ export class RoundInputComponent implements OnInit {
   handicapIndex:  number = 0;
   calcBtnDisabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
+  
+  // must set the type to 'any' for this property otherwise you get an error when trying to use setMessages function
+  validationMessages: any = {
+    // remove below if I am NOT using a required or minimum validation message
+    // required: 'Please enter a valid number',
+    // min: 'Please enter a larger number',
+
+    eighteenHoles: 'Enter in a round of at least 18',
+    nineHoles: 'Enter in a round of at least 9'
+  }
 
   get roundInputs(): FormArray{
     return <FormArray>this.roundForm.get('roundInputs')
-  }
-
-  // must set the type to 'any' for this property otherwise you get an error when trying to use setMessages function
-  validationMessages: any = {
-    required: 'Please enter a valid number',
-
-    // DYNAMICALLY ADD A NUMBER TO THIS MIN SO IT SAYS 'PLEASE ENTER A NUMBER LARGER THAN (X)'??????
-    min: 'Please enter a larger number'
   }
 
   constructor(private fb: FormBuilder) {
@@ -41,7 +43,7 @@ export class RoundInputComponent implements OnInit {
       roundInputs: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
     })
 
-    // this.displayValidation();
+    this.displayValidation();
   };
 
   buildRoundForm() : FormGroup {
@@ -88,20 +90,19 @@ export class RoundInputComponent implements OnInit {
     // display validation based on user input
     const eighteenHoleControl = this.roundInputs.get('0.eighteenHoleScore');
     eighteenHoleControl?.valueChanges.subscribe(value => {
-      this.eighteenHoleValidationMsg = this.setValidationMessage(eighteenHoleControl, this.eighteenHoleValidationMsg);
+      this.eighteenHoleValidationMsg = this.setValidationMessage(eighteenHoleControl, this.eighteenHoleValidationMsg, 'eighteenHoles');
     })
 
     const nineHoleControl = this.roundInputs.get('0.nineHoleScore');
     nineHoleControl?.valueChanges.subscribe(value => {
-      this.nineHoleValidationMsg = this.setValidationMessage(nineHoleControl, this.nineHoleValidationMsg);
+      this.nineHoleValidationMsg = this.setValidationMessage(nineHoleControl, this.nineHoleValidationMsg, 'nineHoles');
     })
   }
 
-  setValidationMessage(control: AbstractControl, validationMsg: any): any {
+  setValidationMessage(control: AbstractControl, validationMsg: any, roundNumberForValidation: string): any {
     validationMsg = '';
     if ((control.touched || control.dirty) && control.errors) {
-      return validationMsg = Object.keys(control.errors).map(
-        key => this.validationMessages[key]).join(' ');
+      return validationMsg = this.validationMessages[roundNumberForValidation];
     }
   }
 

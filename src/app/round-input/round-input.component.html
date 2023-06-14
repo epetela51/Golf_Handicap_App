@@ -13,8 +13,7 @@
                 <!-- 18 hole score input -->
                 <div class="form-group">
                     <label attr.for="{{'eighteenHoleScore' + roundCount}}">18 Hole Score</label>
-                    <input id="{{'eighteenHoleScore' + roundCount}}" type="number" formControlName="eighteenHoleScore"
-                        [ngClass]="{'is-invalid': 'eighteenHoleValidationMsg'}">
+                    <input id="{{'eighteenHoleScore' + roundCount}}" type="number" formControlName="eighteenHoleScore">
                     <br>
                     <span style="font-weight: bold; color: red;">{{ eighteenHoleValidationMsg }}</span>
                 </div>
