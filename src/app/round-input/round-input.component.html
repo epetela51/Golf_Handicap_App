@@ -13,7 +13,7 @@
                 <!-- 18 hole score input -->
                 <div class="form-group">
                     <label attr.for="{{'eighteenHoleScore' + roundCount}}">18 Hole Score</label>
-                    <input id="{{'eighteenHoleScore' + roundCount}}" type="number" formControlName="eighteenHoleScore">
+                    <input id="{{'eighteenHoleScore' + roundCount}}" type="number" formControlName="eighteenHoleScore" min="2">
                     <br>
                     <span style="font-weight: bold; color: red;">{{ eighteenHoleValidationMsg }}</span>
                 </div>
@@ -21,7 +21,7 @@
                 <!-- 9 hole score input -->
                 <div class="form-group">
                     <label attr.for="{{'nineHoleScore' + roundCount}}">9 Hole Score</label>
-                    <input id="{{'nineHoleScore' + roundCount}}" type="number" formControlName="nineHoleScore">
+                    <input id="{{'nineHoleScore' + roundCount}}" type="number" formControlName="nineHoleScore" min="2">
                     <br>
                     <span style="font-weight: bold; color: red;">{{ nineHoleValidationMsg }}</span>
                 </div>
