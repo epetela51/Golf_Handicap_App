@@ -12,7 +12,7 @@
 
                 <!-- 18 hole score input -->
                 <div class="form-group">
-                    <label attr.for="{{'eighteenHoleScore' + roundCount}}">18 Hole Score</label>
+                    <label attr.for="{{'eighteenHoleScore' + roundCount}}">18 Hole Score: </label>
                     <input id="{{'eighteenHoleScore' + roundCount}}" type="number" formControlName="eighteenHoleScore" min="18">
                     <br>
                     <span *ngIf="round.get('eighteenHoleScore')?.errors?.['invalidForm']" style="font-weight: bold; color: red;">Enter in a round of at least 18</span>
@@ -21,15 +21,27 @@
 
                 <!-- 9 hole score input -->
                 <div class="form-group">
-                    <label attr.for="{{'nineHoleScore' + roundCount}}">9 Hole Score</label>
+                    <label attr.for="{{'nineHoleScore' + roundCount}}">9 Hole Score: </label>
                     <input id="{{'nineHoleScore' + roundCount}}" type="number" formControlName="nineHoleScore" min="9">
                     <br>
                     <span *ngIf="round.get('nineHoleScore')?.errors?.['invalidForm']" style="font-weight: bold; color: red;">Enter in a round of at least 9</span>
                 </div>
 
+                <!-- course rating input -->
+                <div class="form-group">
+                    <label attr.for="{{'courseRating' + roundCount}}">Course Rating: </label>
+                    <input id="{{'courseRating' + roundCount}}" type="number" formControlName="courseRating">
+                </div>
+
+                <!-- slope rating input -->
+                <div class="form-group">
+                    <label attr.for="{{'slopeRating' + roundCount}}">Slope Rating: </label>
+                    <input id="{{'slopeRating' + roundCount}}" type="number" formControlName="slopeRating">
+                </div>
+
                 <!-- Round Sum -->
                 <div>
-                    Sum: 
+                    Score Differential: 
                     <span *ngFor="let total of roundTotal; let sumCount = index">
                         <!-- used to prevent multiple sums showing for a single round -->
                         <span *ngIf="roundCount === sumCount">

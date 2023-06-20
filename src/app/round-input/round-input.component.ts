@@ -37,7 +37,9 @@ export class RoundInputComponent implements OnInit {
   buildRoundForm() : FormGroup {
     const roundFormGroup = this.fb.group({
       eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin), this.roundInputValidation(this.eighteenHoleRoundMin)]],
-      nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin), this.roundInputValidation(this.nineHoleRoundMin)]]
+      nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin), this.roundInputValidation(this.nineHoleRoundMin)]],
+      courseRating: [67.5, [Validators.required]],
+      slopeRating: [117, [Validators.required]]
     })
 
     roundFormGroup.valueChanges.subscribe(value => {
@@ -58,14 +60,20 @@ export class RoundInputComponent implements OnInit {
     this.roundTotal = [];
 
     let eighteeenHoleScore;
-    let nineHoleScore;
+    // let nineHoleScore;
+    let courseRating;
+    let slopeRating;
     let total;
 
     this.roundInputs.controls.forEach((control) => {
       if (control.status === 'VALID') {
         eighteeenHoleScore = control.get('eighteenHoleScore')?.value
-        nineHoleScore = control.get('nineHoleScore')?.value
-        total = eighteeenHoleScore + nineHoleScore
+        // nineHoleScore = control.get('nineHoleScore')?.value
+        courseRating = control.get('courseRating')?.value
+        slopeRating = control.get('slopeRating')?.value
+        // grab only up to the first decimal
+        // Math.round requires you to take the number and multiply it by 10 and then take that number and divide by 10 to get 1 decimal
+        total = Math.round(((113 / slopeRating) * (eighteeenHoleScore - courseRating)) * 10) / 10
         this.roundTotal.push(total)
       } else {
         total = 0;
@@ -90,7 +98,7 @@ export class RoundInputComponent implements OnInit {
       tempSum += sum
     })
     // toFixed makes it a string so need to convert it back to a number using Number()
-    this.handicapIndex = Number((tempSum / this.roundTotal.length).toFixed(1))
+    this.handicapIndex = Number(((tempSum / this.roundTotal.length) * 0.96).toFixed(1))
   }
 
   addRound() {
