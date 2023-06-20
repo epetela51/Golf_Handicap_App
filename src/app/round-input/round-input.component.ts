@@ -36,8 +36,8 @@ export class RoundInputComponent implements OnInit {
 
   buildRoundForm() : FormGroup {
     const roundFormGroup = this.fb.group({
-      eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin), this.eighteenHoleValidation]],
-      nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin), this.nineHoleValidation]]
+      eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin), this.roundInputValidation(this.eighteenHoleRoundMin)]],
+      nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin), this.roundInputValidation(this.nineHoleRoundMin)]]
     })
 
     roundFormGroup.valueChanges.subscribe(value => {
@@ -74,21 +74,14 @@ export class RoundInputComponent implements OnInit {
     })
   }
 
-  eighteenHoleValidation(control: AbstractControl): { [key: string]: boolean } | null {
-    if ((control.touched || control.dirty) && control.value < 18) {
-      return { 'eighteenInvalid': true };
-    }
-    return null;
-  }
+  roundInputValidation(score: number): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: boolean } | null => {
+      if ((control.touched || control.dirty) && control.value < score) {
+        return { 'invalidForm': true };
+      }
+      return null;
+  }}
 
-  nineHoleValidation(control: AbstractControl): { [key: string]: boolean } | null {
-    if ((control.touched || control.dirty) && control.value < 9) {
-      return { 'nineInvalid': true };
-    }
-    return null;
-  }
-
-  // will PROBABLY need to use this method to calculate the handicap and display it on the screen
   calculateHandicapBtnClick() {
     this.calcBtnDisabled = true;
 
