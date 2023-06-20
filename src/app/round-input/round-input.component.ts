@@ -12,10 +12,7 @@ export class RoundInputComponent implements OnInit {
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
   roundTotal: number[] = [0, 0, 0];
-  eighteenHoleValidationMsg: string;
-  nineHoleValidationMsg: string;
   eighteenHoleRoundMin: number = 18;
-  nineHoleRoundMin: number = 9;
   handicapIndex:  number = 0;
   calcBtnDisabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
@@ -36,10 +33,10 @@ export class RoundInputComponent implements OnInit {
 
   buildRoundForm() : FormGroup {
     const roundFormGroup = this.fb.group({
-      eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin), this.roundInputValidation(this.eighteenHoleRoundMin)]],
-      nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin), this.roundInputValidation(this.nineHoleRoundMin)]],
+      userRoundScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin), this.roundInputValidation(this.eighteenHoleRoundMin)]],
       courseRating: [67.5, [Validators.required]],
-      slopeRating: [117, [Validators.required]]
+      slopeRating: [117, [Validators.required]],
+      roundSelection: ['eighteenHoles', [Validators.required]]
     })
 
     roundFormGroup.valueChanges.subscribe(value => {
@@ -60,15 +57,13 @@ export class RoundInputComponent implements OnInit {
     this.roundTotal = [];
 
     let eighteeenHoleScore;
-    // let nineHoleScore;
     let courseRating;
     let slopeRating;
     let total;
 
     this.roundInputs.controls.forEach((control) => {
       if (control.status === 'VALID') {
-        eighteeenHoleScore = control.get('eighteenHoleScore')?.value
-        // nineHoleScore = control.get('nineHoleScore')?.value
+        eighteeenHoleScore = control.get('userRoundScore')?.value
         courseRating = control.get('courseRating')?.value
         slopeRating = control.get('slopeRating')?.value
         // grab only up to the first decimal
