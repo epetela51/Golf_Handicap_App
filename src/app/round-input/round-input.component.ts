@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, AbstractControl, FormArray, ValidatorFn, ValidationErrors } from "@angular/forms";
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, AbstractControl, FormArray, ValidatorFn } from "@angular/forms";
 // import { Round } from '../data/user-handicap-modal';
 
 @Component({
@@ -16,12 +16,15 @@ export class RoundInputComponent implements OnInit {
   handicapIndex:  number = 0;
   calcBtnDisabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
+  testMin: number;
 
   get roundInputs(): FormArray{
     return <FormArray>this.roundForm.get('roundInputs')
   }
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private cdf: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -33,23 +36,51 @@ export class RoundInputComponent implements OnInit {
 
   buildRoundForm() : FormGroup {
     const roundFormGroup = this.fb.group({
-      userRoundScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin), this.roundInputValidation(this.eighteenHoleRoundMin)]],
+      userRoundScore: [null, [Validators.required, this.roundInputValidation(this.eighteenHoleRoundMin)]],
       courseRating: [67.5, [Validators.required]],
       slopeRating: [117, [Validators.required]],
-      roundSelection: ['eighteenHoles', [Validators.required]]
-    })
+      roundSelection: ['18']
+    });
 
+    // console.log('round selection value: ', roundFormGroup.controls.roundSelection.value)
+    let priorRoundSelection = roundFormGroup.controls.roundSelection.value;
+  
     roundFormGroup.valueChanges.subscribe(value => {
+      // console.log('round selection value: ', roundFormGroup.controls.roundSelection.value)
+      // console.log('prior round selected was: ', priorRoundSelection)
+      if (roundFormGroup.controls.roundSelection.value !== priorRoundSelection) {
+        console.log('current round selected: ', roundFormGroup.controls.roundSelection.value)
+        // console.log('change in round selection')
+        priorRoundSelection = roundFormGroup.controls.roundSelection.value
+        console.log(typeof priorRoundSelection)
+
+        console.log(Number(priorRoundSelection))
+        console.log(typeof Number(priorRoundSelection))
+
+
+        // console.log(roundFormGroup.controls.userRoundScore)
+        // this.testMin = Number(priorRoundSelection)
+        roundFormGroup.controls.userRoundScore.setValidators(this.roundInputValidation(Number(priorRoundSelection)))
+        roundFormGroup.updateValueAndValidity()
+      } else {
+        console.log('something else changed but current round selected: ', roundFormGroup.controls.roundSelection.value)
+      }
+      console.log('--------------------')
+
+
+      // console.log(roundFormGroup.controls.roundSelection)
+      // console.log(roundFormGroup.controls.userRoundScore)
+      // console.log(value)
       if (this.calcBtnDisabled && value) {
         this.calcBtnDisabled = false;
       }
-    })
+    });
     
     roundFormGroup.statusChanges.subscribe(status => {
       this.calcScoreDifferential();
-    })
-
-    return roundFormGroup
+    });
+  
+    return roundFormGroup;
   }
 
   calcScoreDifferential() {
@@ -79,6 +110,8 @@ export class RoundInputComponent implements OnInit {
 
   roundInputValidation(score: number): ValidatorFn {
     return (control: AbstractControl): { [key: string]: boolean } | null => {
+      this.testMin = score
+      // this.cdf.detectChanges();
       if ((control.touched || control.dirty) && control.value < score) {
         return { 'invalidForm': true };
       }
