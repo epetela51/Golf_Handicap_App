@@ -45,9 +45,8 @@ export class RoundInputComponent implements OnInit {
 
     // used to dynamically set validation for user round input based on radio button selection
     roundFormGroup.controls.roundSelection.valueChanges.subscribe(value => {
-      // on radio btn change clear out the values and errors so validation message is reset
+      // on radio btn change clear out the values
       roundFormGroup.controls.userRoundScore.setValue(null)
-      roundFormGroup.controls.userRoundScore.setErrors(null)
       if (this.calcBtnDisabled === false) {
         this.calcBtnDisabled = true
       }
