@@ -118,6 +118,11 @@ export class RoundInputComponent implements OnInit {
     this.handicapIndex = Number(((tempSum / this.roundTotal.length) * 0.96).toFixed(1))
   }
 
+  // dynamically sets the minimum value for user input based on round selection
+  getMinScore(roundSelectionValue: string): number {
+    return roundSelectionValue === '9' ? 9 : 18;
+  }  
+
   addRound() {
     if (this.roundInputs.length < 20) {
       this.roundInputs.push(this.buildRoundForm())
