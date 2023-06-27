@@ -45,6 +45,9 @@ export class RoundInputComponent implements OnInit {
       // on radio btn change clear out the values and errors so validation message is reset
       roundFormGroup.controls.userRoundScore.setValue(null)
       roundFormGroup.controls.userRoundScore.setErrors(null)
+      if (this.calcBtnDisabled === false) {
+        this.calcBtnDisabled = true
+      }
       if (value === '9') {
         roundFormGroup.controls.userRoundScore.setValidators([Validators.min(9), this.roundInputValidation(Number(value))])
       } else {
@@ -56,8 +59,8 @@ export class RoundInputComponent implements OnInit {
   
     // enable calculate handicap btn if user calculates handicap and then makes a changes.  After initial calculation btn is disabled until a value is changed
     roundFormGroup.valueChanges.subscribe(value => {
-      if (this.calcBtnDisabled && value) {
-        this.calcBtnDisabled = false;
+      if(value && value.userRoundScore !== null && this.calcBtnDisabled) {
+          this.calcBtnDisabled = false;
       }
     });
     
