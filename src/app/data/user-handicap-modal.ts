@@ -1,5 +1,5 @@
 // export interface UserHandicapRounds {
-//     eighteenHoleScore: number;
+//     userRoundScore: number;
 //     nineHoleScore: number;
 //     courseRating: number;
 //     slopeRating: number;
@@ -8,6 +8,6 @@
 
 export class Round {
     constructor(
-        public eighteenHoleScore = 0,
+        public userRoundScore = 0,
         public nineHoleScore = 0) { }
 }

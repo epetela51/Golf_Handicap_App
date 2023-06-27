@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, AbstractControl, FormArray, ValidatorFn, ValidationErrors } from "@angular/forms";
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, AbstractControl, FormArray, ValidatorFn } from "@angular/forms";
 // import { Round } from '../data/user-handicap-modal';
 
 @Component({
@@ -12,10 +12,7 @@ export class RoundInputComponent implements OnInit {
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
   roundTotal: number[] = [0, 0, 0];
-  eighteenHoleValidationMsg: string;
-  nineHoleValidationMsg: string;
   eighteenHoleRoundMin: number = 18;
-  nineHoleRoundMin: number = 9;
   handicapIndex:  number = 0;
   calcBtnDisabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
@@ -24,7 +21,8 @@ export class RoundInputComponent implements OnInit {
     return <FormArray>this.roundForm.get('roundInputs')
   }
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
@@ -36,23 +34,44 @@ export class RoundInputComponent implements OnInit {
 
   buildRoundForm() : FormGroup {
     const roundFormGroup = this.fb.group({
-      eighteenHoleScore: [null, [Validators.required, Validators.min(this.eighteenHoleRoundMin), this.roundInputValidation(this.eighteenHoleRoundMin)]],
-      nineHoleScore: [null, [Validators.required, Validators.min(this.nineHoleRoundMin), this.roundInputValidation(this.nineHoleRoundMin)]],
+      userRoundScore: [null, {
+        validators: [Validators.required, Validators.min(18), this.roundInputValidation(this.eighteenHoleRoundMin)],
+        updateOn: 'blur'
+      }],
       courseRating: [67.5, [Validators.required]],
-      slopeRating: [117, [Validators.required]]
-    })
+      slopeRating: [117, [Validators.required]],
+      roundSelection: ['18']
+    });
 
-    roundFormGroup.valueChanges.subscribe(value => {
-      if (this.calcBtnDisabled && value) {
-        this.calcBtnDisabled = false;
+    // used to dynamically set validation for user round input based on radio button selection
+    roundFormGroup.controls.roundSelection.valueChanges.subscribe(value => {
+      // on radio btn change clear out the values
+      roundFormGroup.controls.userRoundScore.setValue(null)
+      if (this.calcBtnDisabled === false) {
+        this.calcBtnDisabled = true
       }
+      if (value === '9') {
+        roundFormGroup.controls.userRoundScore.setValidators([Validators.min(9), this.roundInputValidation(Number(value))])
+      } else {
+        roundFormGroup.controls.userRoundScore.setValidators([Validators.min(18), this.roundInputValidation(Number(value))])
+        Validators.min(18)
+      }
+      roundFormGroup.updateValueAndValidity()
     })
+  
+    // enable calculate handicap btn if user calculates handicap and then makes a changes.  After initial calculation btn is disabled until a value is changed
+    roundFormGroup.valueChanges.subscribe(value => {
+      if(value && value.userRoundScore !== null && this.calcBtnDisabled) {
+          this.calcBtnDisabled = false;
+      }
+    });
     
+    // calculate score differential whenever status changes
     roundFormGroup.statusChanges.subscribe(status => {
       this.calcScoreDifferential();
-    })
-
-    return roundFormGroup
+    });
+  
+    return roundFormGroup;
   }
 
   calcScoreDifferential() {
@@ -60,15 +79,13 @@ export class RoundInputComponent implements OnInit {
     this.roundTotal = [];
 
     let eighteeenHoleScore;
-    // let nineHoleScore;
     let courseRating;
     let slopeRating;
     let total;
 
     this.roundInputs.controls.forEach((control) => {
-      if (control.status === 'VALID') {
-        eighteeenHoleScore = control.get('eighteenHoleScore')?.value
-        // nineHoleScore = control.get('nineHoleScore')?.value
+      if (control.status === 'VALID' && control.get('userRoundScore')?.value !== null) {
+        eighteeenHoleScore = control.get('userRoundScore')?.value
         courseRating = control.get('courseRating')?.value
         slopeRating = control.get('slopeRating')?.value
         // grab only up to the first decimal
@@ -100,6 +117,11 @@ export class RoundInputComponent implements OnInit {
     // toFixed makes it a string so need to convert it back to a number using Number()
     this.handicapIndex = Number(((tempSum / this.roundTotal.length) * 0.96).toFixed(1))
   }
+
+  // dynamically sets the minimum value for user input based on round selection
+  getMinScore(roundSelectionValue: string): number {
+    return roundSelectionValue === '9' ? 9 : 18;
+  }  
 
   addRound() {
     if (this.roundInputs.length < 20) {
