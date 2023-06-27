@@ -79,7 +79,7 @@ export class RoundInputComponent implements OnInit {
     let total;
 
     this.roundInputs.controls.forEach((control) => {
-      if (control.status === 'VALID') {
+      if (control.status === 'VALID' && control.get('userRoundScore')?.value !== null) {
         eighteeenHoleScore = control.get('userRoundScore')?.value
         courseRating = control.get('courseRating')?.value
         slopeRating = control.get('slopeRating')?.value
