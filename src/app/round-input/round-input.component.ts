@@ -12,6 +12,10 @@ export class RoundInputComponent implements OnInit {
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
   roundTotal: number[] = [0, 0, 0];
+  /*
+  remove this in the future since on page load userRoundScore is disabled
+  and selecting a radio button will enable the round and also pass in the correct min
+  */
   eighteenHoleRoundMin: number = 18;
   handicapIndex:  number = 0;
   calcBtnDisabled: boolean = false;
@@ -34,29 +38,40 @@ export class RoundInputComponent implements OnInit {
 
   buildRoundForm() : FormGroup {
     const roundFormGroup = this.fb.group({
-      userRoundScore: [null, {
-        validators: [Validators.required, Validators.min(18), this.roundInputValidation(this.eighteenHoleRoundMin)],
-        updateOn: 'blur'
+      userRoundScore: [
+        {
+          value: null, disabled: true
+        },
+        {
+        validators: [Validators.required, this.roundInputValidation(this.eighteenHoleRoundMin)],
+        updateOn: 'change'
       }],
       courseRating: [67.5, [Validators.required]],
       slopeRating: [117, [Validators.required]],
-      roundSelection: ['18']
+      roundSelection: [null, [Validators.required]]
     });
 
     // used to dynamically set validation for user round input based on radio button selection
     roundFormGroup.controls.roundSelection.valueChanges.subscribe(value => {
-      // on radio btn change clear out the values
+      // on radio btn change clear out the values for round score
       roundFormGroup.controls.userRoundScore.setValue(null)
+
       if (this.calcBtnDisabled === false) {
         this.calcBtnDisabled = true
       }
-      if (value === '9') {
-        roundFormGroup.controls.userRoundScore.setValidators([Validators.min(9), this.roundInputValidation(Number(value))])
-      } else {
-        roundFormGroup.controls.userRoundScore.setValidators([Validators.min(18), this.roundInputValidation(Number(value))])
-        Validators.min(18)
+
+      if (value === '9' || value === '18') {
+        roundFormGroup.controls.userRoundScore.enable();
+        roundFormGroup.controls.userRoundScore.setValidators([
+          Validators.required,
+          Validators.min(Number(value)),
+          this.roundInputValidation(Number(value))
+        ]);
       }
-      roundFormGroup.updateValueAndValidity()
+    
+      // onlySelf is an optional parameter which only runs updateValueAndValidity for this specific control
+      // since we are only setting validators for userRoundScore we only need to update validation runs for this control
+      roundFormGroup.controls.userRoundScore.updateValueAndValidity({ onlySelf: true });
     })
   
     // enable calculate handicap btn if user calculates handicap and then makes a changes.  After initial calculation btn is disabled until a value is changed
@@ -78,19 +93,19 @@ export class RoundInputComponent implements OnInit {
     // reset the array holding the sums otherwise the array can double when doing a calc, adding a round and then doing another clac
     this.roundTotal = [];
 
-    let eighteeenHoleScore;
+    let roundScoreInput;
     let courseRating;
     let slopeRating;
     let total;
 
     this.roundInputs.controls.forEach((control) => {
       if (control.status === 'VALID' && control.get('userRoundScore')?.value !== null) {
-        eighteeenHoleScore = control.get('userRoundScore')?.value
+        roundScoreInput = control.get('userRoundScore')?.value
         courseRating = control.get('courseRating')?.value
         slopeRating = control.get('slopeRating')?.value
         // grab only up to the first decimal
         // Math.round requires you to take the number and multiply it by 10 and then take that number and divide by 10 to get 1 decimal
-        total = Math.round(((113 / slopeRating) * (eighteeenHoleScore - courseRating)) * 10) / 10
+        total = Math.round(((113 / slopeRating) * (roundScoreInput - courseRating)) * 10) / 10
         this.roundTotal.push(total)
       } else {
         total = 0;
