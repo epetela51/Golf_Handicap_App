@@ -60,12 +60,12 @@ export class RoundInputComponent implements OnInit {
         this.calcBtnDisabled = true
       }
 
-      if (value === '9' || value === '18') {
+      if (value === 9 || value === 18) {
         roundFormGroup.controls.userRoundScore.enable();
         roundFormGroup.controls.userRoundScore.setValidators([
           Validators.required,
-          Validators.min(Number(value)),
-          this.roundInputValidation(Number(value))
+          Validators.min(value),
+          this.roundInputValidation(value)
         ]);
       }
     
@@ -134,8 +134,8 @@ export class RoundInputComponent implements OnInit {
   }
 
   // dynamically sets the minimum value for user input based on round selection
-  getMinScore(roundSelectionValue: string): number {
-    return roundSelectionValue === '9' ? 9 : 18;
+  getMinScore(roundSelectionValue: number): number {
+    return roundSelectionValue === 9 ? 9 : 18;
   }  
 
   addRound() {
