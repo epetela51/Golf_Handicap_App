@@ -13,7 +13,7 @@ export class RoundInputComponent implements OnInit {
   roundForm: FormGroup;
   roundTotal: number[] = [0, 0, 0];
   /*
-  remove this in the future since on page load userRoundScore is disabled
+  remove the below eighteenHoleRoundMin variable in the future since on page load userRoundScore is disabled
   and selecting a radio button will enable the round and also pass in the correct min
   */
   eighteenHoleRoundMin: number = 18;
@@ -21,8 +21,8 @@ export class RoundInputComponent implements OnInit {
   calcBtnDisabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
 
-  get roundInputs(): FormArray{
-    return <FormArray>this.roundForm.get('roundInputs')
+  get roundInputsArray(): FormArray{
+    return <FormArray>this.roundForm.get('roundInputsArray')
   }
 
   constructor(
@@ -32,7 +32,7 @@ export class RoundInputComponent implements OnInit {
   ngOnInit(): void {
 
     this.roundForm = this.fb.group({
-      roundInputs: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
+      roundInputsArray: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
     })
   };
 
@@ -98,7 +98,7 @@ export class RoundInputComponent implements OnInit {
     let slopeRating;
     let total;
 
-    this.roundInputs.controls.forEach((control) => {
+    this.roundInputsArray.controls.forEach((control) => {
       if (control.status === 'VALID' && control.get('userRoundScore')?.value !== null) {
         roundScoreInput = control.get('userRoundScore')?.value
         courseRating = control.get('courseRating')?.value
@@ -139,8 +139,8 @@ export class RoundInputComponent implements OnInit {
   }  
 
   addRound() {
-    if (this.roundInputs.length < 20) {
-      this.roundInputs.push(this.buildRoundForm())
+    if (this.roundInputsArray.length < 20) {
+      this.roundInputsArray.push(this.buildRoundForm())
       this.roundTotal.push(0)
     } else {
       alert('Maximum of 20 rounds allowed');
@@ -149,8 +149,8 @@ export class RoundInputComponent implements OnInit {
   }
 
   removeRound() {
-    if (this.roundInputs.length > 3) {
-      this.roundInputs.removeAt(-1)
+    if (this.roundInputsArray.length > 3) {
+      this.roundInputsArray.removeAt(-1)
       this.roundTotal.pop()
     } else {
       alert('Minimum of 3 rounds are required');
@@ -162,7 +162,7 @@ export class RoundInputComponent implements OnInit {
     this.roundForm.reset()
     // re-binding the formGroup will re-set the form array and the number of formControls back to it's default of 3
     this.roundForm = this.fb.group({
-      roundInputs: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
+      roundInputsArray: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
     })
     this.handicapIndex = 0;
   }

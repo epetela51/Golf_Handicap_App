@@ -1,7 +1,7 @@
 <div>
     <form [formGroup]="roundForm">
-        <div formArrayName="roundInputs"
-            *ngFor="let round of roundInputs.controls; let roundCount=index">
+        <div formArrayName="roundInputsArray"
+            *ngFor="let round of roundInputsArray.controls; let roundCount=index">
             <div [formGroupName]="roundCount">
 
                 <!-- Round number -->
