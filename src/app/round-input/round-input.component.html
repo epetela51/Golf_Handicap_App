@@ -11,35 +11,36 @@
                 </div>
 
                 <!-- 9 or 18 hole selection -->
-                <div class="form-group">
-                    <label>Round Selection: </label>
-                    <div>
-                        <label attr.for="{{'nineHoles' + roundCount}}">
-                            <input type="radio"
-                            id="{{'nineHoles' + roundCount}}"
-                            [value]=9
-                            formControlName="roundSelection">
-                            9 Holes
-                        </label>
+                <ng-container formGroupName="roundSelectionGroup">
+                    <div class="form-group">
+                        <label>Round Selection: </label>
+                        <div>
+                            <label attr.for="{{'nineHoles' + roundCount}}">
+                                <input type="radio"
+                                id="{{'nineHoles' + roundCount}}"
+                                [value]=9
+                                formControlName="roundSelection">
+                                9 Holes
+                            </label>
+                        </div>
+                        <div>
+                            <label attr.for="{{'eighteenHoles' + roundCount}}">
+                                <input type="radio"
+                                id="{{'eighteenHoles' + roundCount}}"
+                                [value]=18 
+                                formControlName="roundSelection">
+                                18 Holes
+                            </label>
+                        </div>
                     </div>
-                    <div>
-                        <label attr.for="{{'eighteenHoles' + roundCount}}">
-                            <input type="radio"
-                            id="{{'eighteenHoles' + roundCount}}"
-                            [value]=18 
-                            formControlName="roundSelection">
-                            18 Holes
-                        </label>
-                    </div>
-                </div>
-
+                </ng-container>
 
                 <!-- round score input -->
                 <div class="form-group">
                     <label attr.for="{{'userRoundScore' + roundCount}}">Round Score: </label>
-                    <input id="{{'userRoundScore' + roundCount}}" type="number" formControlName="userRoundScore" [min]="getMinScore(round.get('roundSelection')?.value)">
+                    <input id="{{'userRoundScore' + roundCount}}" type="number" formControlName="userRoundScore" [min]="getMinScore(round.get('roundSelectionGroup')?.get('roundSelection')?.value)">
                     <br>
-                    <span *ngIf="round.get('userRoundScore')?.errors?.['invalidForm']" style="font-weight: bold; color: red;">Enter in a round of at least {{round.get('roundSelection')?.value === 18 ? '18' : '9'}}</span>
+                    <span *ngIf="round.get('userRoundScore')?.errors?.['invalidForm']" style="font-weight: bold; color: red;">Enter in a round of at least {{round.get('roundSelectionGroup')?.get('roundSelection')?.value === 18 ? '18' : '9'}}</span>
                 </div>
 
                 <!-- course rating input -->

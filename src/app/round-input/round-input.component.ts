@@ -12,14 +12,10 @@ export class RoundInputComponent implements OnInit {
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
   roundTotal: number[] = [0, 0, 0];
-  /*
-  remove the below eighteenHoleRoundMin variable in the future since on page load userRoundScore is disabled
-  and selecting a radio button will enable the round and also pass in the correct min
-  */
-  eighteenHoleRoundMin: number = 18;
   handicapIndex:  number = 0;
   calcBtnDisabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
+  roundInputsArrayIndex: number = 3; // starts at 3 because the first 3 formGroups are positions 0 - 2
 
   get roundInputsArray(): FormArray{
     return <FormArray>this.roundForm.get('roundInputsArray')
@@ -32,61 +28,67 @@ export class RoundInputComponent implements OnInit {
   ngOnInit(): void {
 
     this.roundForm = this.fb.group({
-      roundInputsArray: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
+      roundInputsArray: this.fb.array([ this.buildRoundForm(0), this.buildRoundForm(1), this.buildRoundForm(2) ])
     })
   };
 
-  buildRoundForm() : FormGroup {
+  buildRoundForm(index: number) : FormGroup {
     const roundFormGroup = this.fb.group({
       userRoundScore: [
-        {
-          value: null, disabled: true
-        },
-        {
-        validators: [Validators.required, this.roundInputValidation(this.eighteenHoleRoundMin)],
-        updateOn: 'change'
-      }],
+        { value: null, disabled: true },
+        { updateOn: 'change' }
+      ],
       courseRating: [67.5, [Validators.required]],
       slopeRating: [117, [Validators.required]],
-      roundSelection: [null, [Validators.required]]
+      roundSelectionGroup: this.fb.group({
+        roundSelection: [null, [Validators.required]],
+      })
     });
 
-    // used to dynamically set validation for user round input based on radio button selection
-    roundFormGroup.controls.roundSelection.valueChanges.subscribe(value => {
-      // on radio btn change clear out the values for round score
-      roundFormGroup.controls.userRoundScore.setValue(null)
-
-      if (this.calcBtnDisabled === false) {
-        this.calcBtnDisabled = true
-      }
-
-      if (value === 9 || value === 18) {
-        roundFormGroup.controls.userRoundScore.enable();
-        roundFormGroup.controls.userRoundScore.setValidators([
-          Validators.required,
-          Validators.min(value),
-          this.roundInputValidation(value)
-        ]);
-      }
-    
-      // onlySelf is an optional parameter which only runs updateValueAndValidity for this specific control
-      // since we are only setting validators for userRoundScore we only need to update validation runs for this control
-      roundFormGroup.controls.userRoundScore.updateValueAndValidity({ onlySelf: true });
-    })
-  
-    // enable calculate handicap btn if user calculates handicap and then makes a changes.  After initial calculation btn is disabled until a value is changed
-    roundFormGroup.valueChanges.subscribe(value => {
-      if(value && value.userRoundScore !== null && this.calcBtnDisabled) {
-          this.calcBtnDisabled = false;
-      }
+    roundFormGroup.controls.roundSelectionGroup.controls.roundSelection.valueChanges.subscribe(value => {
+      this.handleUserRoundScoreOnRoundSelectionChange(value, index);
     });
-    
-    // calculate score differential whenever status changes
-    roundFormGroup.statusChanges.subscribe(status => {
+
+    /*
+      Enable calculate handicap btn if user calculates handicap and then makes a changes.  After initial calculation btn is disabled until a value is changed
+      Have the score differential calculated whenever the formGroup value change fires
+    */
+    roundFormGroup.valueChanges.subscribe(control => {
+      if (control && control.userRoundScore !== null && this.calcBtnDisabled) {
+        this.calcBtnDisabled = false;
+       }
       this.calcScoreDifferential();
     });
   
     return roundFormGroup;
+  }
+
+  // used to dynamically set validation for user round input based on radio button selection
+  handleUserRoundScoreOnRoundSelectionChange(roundSelected: number | null, index: number) {
+    const userRoundScoreFormControl = this.roundInputsArray.controls[index].get('userRoundScore')
+
+    // on radio btn change, clear out the value for user round score
+    userRoundScoreFormControl?.setValue(null)
+
+    if (this.calcBtnDisabled === false) {
+      this.calcBtnDisabled = true
+    }
+
+    let roundSelectionValue: number = 0;
+    if (roundSelected != null) {
+      roundSelectionValue = roundSelected
+    }
+
+    userRoundScoreFormControl?.enable();
+    userRoundScoreFormControl?.setValidators([
+      Validators.required,
+      Validators.min(roundSelectionValue),
+      this.roundInputValidation(roundSelectionValue)
+    ]);
+    
+    // onlySelf is an optional parameter which only runs updateValueAndValidity for this specific control
+    // since we are only setting validators for userRoundScore we only need to update validation runs for this control
+    userRoundScoreFormControl?.updateValueAndValidity({ onlySelf: true });
   }
 
   calcScoreDifferential() {
@@ -139,13 +141,14 @@ export class RoundInputComponent implements OnInit {
   }  
 
   addRound() {
+    // tweak below because it won't be based off number of rounds but number of holes played
     if (this.roundInputsArray.length < 20) {
-      this.roundInputsArray.push(this.buildRoundForm())
+      this.roundInputsArray.push(this.buildRoundForm(this.roundInputsArrayIndex))
+      this.roundInputsArrayIndex++;
       this.roundTotal.push(0)
     } else {
       alert('Maximum of 20 rounds allowed');
     }
-
   }
 
   removeRound() {
@@ -156,15 +159,17 @@ export class RoundInputComponent implements OnInit {
       alert('Minimum of 3 rounds are required');
     }
     this.calcBtnDisabled = false;
+    this.roundInputsArrayIndex--;
   }
 
   resetAllRounds() {
     this.roundForm.reset()
     // re-binding the formGroup will re-set the form array and the number of formControls back to it's default of 3
     this.roundForm = this.fb.group({
-      roundInputsArray: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
+      roundInputsArray: this.fb.array([ this.buildRoundForm(0), this.buildRoundForm(1), this.buildRoundForm(2) ])
     })
     this.handicapIndex = 0;
+    this.roundInputsArrayIndex = 3;
   }
 
 }
