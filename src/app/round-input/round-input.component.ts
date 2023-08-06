@@ -12,7 +12,7 @@ export class RoundInputComponent implements OnInit {
 
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
-  roundTotal: number[] = [];
+  roundTotal: number[] = [0, 0, 0];
   handicapIndex:  number = 0;
   calcBtnDisabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
