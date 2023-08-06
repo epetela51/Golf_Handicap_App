@@ -49,7 +49,11 @@ export class RoundInputComponent implements OnInit {
     roundFormGroup.controls.roundSelectionGroup.controls.roundSelection.valueChanges.subscribe(value => {
       this.handleUserRoundScoreOnRoundSelectionChange(value, index);
     });
-  
+
+    /*
+      Enable calculate handicap btn if user calculates handicap and then makes a changes.  After initial calculation btn is disabled until a value is changed
+      Have the score differential calculated whenever the formGroup value change fires
+    */
     roundFormGroup.valueChanges.subscribe(control => {
       if (control && control.userRoundScore !== null && this.calcBtnDisabled) {
         this.calcBtnDisabled = false;
