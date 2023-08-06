@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl, FormArray, ValidatorFn } from "@angular/forms";
-import { map } from 'rxjs';
 // import { Round } from '../data/user-handicap-modal';
 
 @Component({
