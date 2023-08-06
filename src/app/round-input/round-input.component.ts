@@ -36,12 +36,9 @@ export class RoundInputComponent implements OnInit {
   buildRoundForm(index: number) : FormGroup {
     const roundFormGroup = this.fb.group({
       userRoundScore: [
-        {
-          value: null, disabled: true
-        },
-        {
-        updateOn: 'change'
-      }],
+        { value: null, disabled: true },
+        { updateOn: 'change' }
+      ],
       courseRating: [67.5, [Validators.required]],
       slopeRating: [117, [Validators.required]],
       roundSelectionGroup: this.fb.group({
@@ -54,7 +51,7 @@ export class RoundInputComponent implements OnInit {
     });
   
     roundFormGroup.valueChanges.subscribe(control => {
-      if(control && control.userRoundScore !== null && this.calcBtnDisabled) {
+      if (control && control.userRoundScore !== null && this.calcBtnDisabled) {
         this.calcBtnDisabled = false;
        }
       this.calcScoreDifferential();
@@ -141,6 +138,7 @@ export class RoundInputComponent implements OnInit {
   }  
 
   addRound() {
+    // tweak below because it won't be based off number of rounds but number of holes played
     if (this.roundInputsArray.length < 20) {
       this.roundInputsArray.push(this.buildRoundForm(this.roundInputsArrayIndex))
       this.roundInputsArrayIndex++;
