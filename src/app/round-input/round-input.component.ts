@@ -16,6 +16,8 @@ export class RoundInputComponent implements OnInit {
   calcBtnDisabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
   roundInputsArrayIndex: number = 3; // starts at 3 because the first 3 formGroups are positions 0 - 2
+  totalHolesPlayedArray: number [] = [];
+  totalHolesPlayed: number = 0;
 
   get roundInputsArray(): FormArray{
     return <FormArray>this.roundForm.get('roundInputsArray')
@@ -46,7 +48,7 @@ export class RoundInputComponent implements OnInit {
     });
 
     roundFormGroup.controls.roundSelectionGroup.controls.roundSelection.valueChanges.subscribe(value => {
-      this.handleUserRoundScoreOnRoundSelectionChange(value, index);
+      this.handleRoundSelectionChange(value, index);
     });
 
     /*
@@ -64,7 +66,7 @@ export class RoundInputComponent implements OnInit {
   }
 
   // used to dynamically set validation for user round input based on radio button selection
-  handleUserRoundScoreOnRoundSelectionChange(roundSelected: number | null, index: number) {
+  handleRoundSelectionChange(roundSelected: number | null, index: number) {
     const userRoundScoreFormControl = this.roundInputsArray.controls[index].get('userRoundScore')
 
     // on radio btn change, clear out the value for user round score
@@ -78,6 +80,15 @@ export class RoundInputComponent implements OnInit {
     if (roundSelected != null) {
       roundSelectionValue = roundSelected
     }
+
+    // set the round selected value from radio button into the array at the specific position
+    this.totalHolesPlayedArray[index] = roundSelectionValue;
+
+    // reset back to 0 on each radio btn click otherwise totalHolesPlayed will hold onto a value and incorreectly add to current loop of round values 
+    this.totalHolesPlayed = 0;
+    this.totalHolesPlayedArray.forEach(round => {
+      this.totalHolesPlayed += round;
+    })
 
     userRoundScoreFormControl?.enable();
     userRoundScoreFormControl?.setValidators([
@@ -159,6 +170,9 @@ export class RoundInputComponent implements OnInit {
       alert('Minimum of 3 rounds are required');
     }
     this.calcBtnDisabled = false;
+    const lastRoundInArray = this.totalHolesPlayedArray[this.totalHolesPlayedArray.length - 1]
+    this.totalHolesPlayed -= lastRoundInArray;
+    this.totalHolesPlayedArray.pop()
     this.roundInputsArrayIndex--;
   }
 
