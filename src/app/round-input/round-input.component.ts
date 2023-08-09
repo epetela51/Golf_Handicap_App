@@ -13,7 +13,7 @@ export class RoundInputComponent implements OnInit {
   roundForm: FormGroup;
   roundTotal: number[] = [0, 0, 0];
   handicapIndex:  number = 0;
-  calcBtnDisabled: boolean = false;
+  calcBtnEnabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
   roundInputsArrayIndex: number = 3; // starts at 3 because the first 3 formGroups are positions 0 - 2
   totalHolesPlayedArray: number [] = [];
@@ -56,8 +56,8 @@ export class RoundInputComponent implements OnInit {
       Have the score differential calculated whenever the formGroup value change fires
     */
     roundFormGroup.valueChanges.subscribe(control => {
-      if (control && control.userRoundScore !== null && this.calcBtnDisabled) {
-        this.calcBtnDisabled = false;
+      if (control && control.userRoundScore !== null && this.calcBtnEnabled) {
+        this.calcBtnEnabled = false;
        }
       this.calcScoreDifferential();
     });
@@ -72,8 +72,8 @@ export class RoundInputComponent implements OnInit {
     // on radio btn change, clear out the value for user round score
     userRoundScoreFormControl?.setValue(null)
 
-    if (this.calcBtnDisabled === false) {
-      this.calcBtnDisabled = true
+    if (this.calcBtnEnabled === false) {
+      this.calcBtnEnabled = true
     }
 
     let roundSelectionValue: number = 0;
@@ -136,7 +136,7 @@ export class RoundInputComponent implements OnInit {
   }}
 
   calculateHandicapBtnClick() {
-    this.calcBtnDisabled = true;
+    this.calcBtnEnabled = true;
 
     let tempSum = 0;
     this.roundTotal.forEach((sum) => {
@@ -169,7 +169,7 @@ export class RoundInputComponent implements OnInit {
     } else {
       alert('Minimum of 3 rounds are required');
     }
-    this.calcBtnDisabled = false;
+    this.calcBtnEnabled = false;
     const lastRoundInArray = this.totalHolesPlayedArray[this.totalHolesPlayedArray.length - 1]
     this.totalHolesPlayed -= lastRoundInArray;
     this.totalHolesPlayedArray.pop()
