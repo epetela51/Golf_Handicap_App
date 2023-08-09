@@ -72,6 +72,10 @@
             
         </div>
 
+        Total Holes Played: {{totalHolesPlayed}}
+        <br>
+        <br>
+
         <button (click)='removeRound()'>Remove Last Round</button>
 
         <br>
@@ -86,7 +90,7 @@
         <br>
 
         <button (click)='calculateHandicapBtnClick()'
-            [disabled]="calcBtnDisabled || !roundForm.valid" >
+            [disabled]="(calcBtnEnabled || !roundForm.valid) || totalHolesPlayed < 54" >
             Calculate Handicap
         </button>
 
@@ -95,7 +99,7 @@
     <br>
     
     <div>
-        <p *ngIf="!calcBtnDisabled && handicapIndex !== 0">{{recalcHandicapMsg}}</p>
+        <p *ngIf="!calcBtnEnabled && handicapIndex !== 0">{{recalcHandicapMsg}}</p>
         <p>Your Handicap Index: <span>{{handicapIndex}}</span> </p>
     </div>
 
