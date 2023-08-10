@@ -48,7 +48,12 @@ export class RoundInputComponent implements OnInit {
     });
 
     roundFormGroup.controls.roundSelectionGroup.controls.roundSelection.valueChanges.subscribe(value => {
-      this.handleRoundSelectionChange(value, index);
+      // this is used to bypass issue that roundSelected COULD be null
+      let roundSelectionValue: number = 0;
+      if (value != null) {
+        roundSelectionValue = value
+      }
+      this.handleRoundSelectionChange(roundSelectionValue, index)
     });
 
     /*
@@ -66,7 +71,7 @@ export class RoundInputComponent implements OnInit {
   }
 
   // used to dynamically set validation for user round input based on radio button selection
-  handleRoundSelectionChange(roundSelected: number | null, index: number) {
+  handleRoundSelectionChange(roundSelected: number, index: number) {
     const userRoundScoreFormControl = this.roundInputsArray.controls[index].get('userRoundScore')
 
     // on radio btn change, clear out the value for user round score
@@ -76,13 +81,8 @@ export class RoundInputComponent implements OnInit {
       this.calcBtnEnabled = true
     }
 
-    let roundSelectionValue: number = 0;
-    if (roundSelected != null) {
-      roundSelectionValue = roundSelected
-    }
-
     // set the round selected value from radio button into the array at the specific position
-    this.totalHolesPlayedArray[index] = roundSelectionValue;
+    this.totalHolesPlayedArray[index] = roundSelected;
 
     // reset back to 0 on each radio btn click otherwise totalHolesPlayed will hold onto a value and incorreectly add to current loop of round values 
     this.totalHolesPlayed = 0;
@@ -93,8 +93,8 @@ export class RoundInputComponent implements OnInit {
     userRoundScoreFormControl?.enable();
     userRoundScoreFormControl?.setValidators([
       Validators.required,
-      Validators.min(roundSelectionValue),
-      this.roundInputValidation(roundSelectionValue)
+      Validators.min(roundSelected),
+      this.roundInputValidation(roundSelected)
     ]);
     
     // onlySelf is an optional parameter which only runs updateValueAndValidity for this specific control
