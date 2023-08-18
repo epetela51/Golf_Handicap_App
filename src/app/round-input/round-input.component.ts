@@ -18,7 +18,7 @@ export class RoundInputComponent implements OnInit {
   roundInputsArrayIndex: number = 3; // starts at 3 because the first 3 formGroups are positions 0 - 2
   totalHolesPlayedArray: number [] = [];
   totalHolesPlayed: number = 0;
-  maxHolesAllowed: number = 72; // this would be 360
+  maxHolesAllowed: number = 360;
 
   get roundInputsArray(): FormArray{
     return <FormArray>this.roundForm.get('roundInputsArray')
@@ -72,7 +72,23 @@ export class RoundInputComponent implements OnInit {
   }
 
   checkIfMaxTotalRoundsAreMet(roundSelected: number, index: number) {
-    console.log(`Starting the method call: The total holes played is ${this.totalHolesPlayed}`)
+    const difference = this.maxHolesAllowed - this.totalHolesPlayed
+    const userRoundScoreFormControl = this.roundInputsArray.controls[index].get('userRoundScore')
+
+    if (difference  <= 9) {
+      if (roundSelected == 18) {
+        console.log('You can ONLY enter in a 9 hole round.  STOP THEM FROM SELECTING 18 HOLE VALUE')
+        // below is used in event user selects 18 and the user round score is disabled, they hit 9 and enables the user round score
+        // and then hits 18 again and the user round score is STILL enabled
+        userRoundScoreFormControl?.setValue(null)
+        userRoundScoreFormControl?.disable()
+        // alert(`Your total holes played is ${this.totalHolesPlayed} so you can only enter a 9 hole round`)
+      } else {
+        this.handleRoundSelectionChange(roundSelected, index)
+      }
+    } else {
+      this.handleRoundSelectionChange(roundSelected, index)
+    }
 
     // set the round selected value from radio button into the array at the specific position
     this.totalHolesPlayedArray[index] = roundSelected;
@@ -82,32 +98,6 @@ export class RoundInputComponent implements OnInit {
     this.totalHolesPlayedArray.forEach(round => {
       this.totalHolesPlayed += round;
     })
-
-    /*
-      MOCK BY MAKING MAX TOTAL HOLES PLAYED 72
-
-      1) Check to see what the totals holes currently is
-      2) if we are sitting at a difference of 9 (i.e. Max is 72 holes so we are sitting at 63 holes played)
-      3) Check to see if the value being selected === 9
-      4) If it is then let them move forward
-      5) ELSE stop them and put a message up that says they NEED to select 9
-      NOTE: What happens if user selects 9 and then switches back to 18?!?! Will it let them go forward???
-    */
-
-    const difference = this.maxHolesAllowed - this.totalHolesPlayed
-    console.log(`Difference between max holes allowed and total holes played is ${difference}`)
-
-    if (difference  < 9) {
-      if (roundSelected == 18) {
-        console.log('You can ONLY enter in a 9 hole round.  STOP THEM FROM SELECTING 18 HOLE VALUE')
-      } else {
-        console.log('Good job selecting 9 holes')
-        this.handleRoundSelectionChange(roundSelected, index)
-      }
-    } else {
-      console.log(`You can enter either 9 or 18 holes`)
-      this.handleRoundSelectionChange(roundSelected, index)
-    }
   }
 
   // used to dynamically set validation for user round input based on radio button selection
@@ -120,20 +110,6 @@ export class RoundInputComponent implements OnInit {
     if (this.calcBtnEnabled === false) {
       this.calcBtnEnabled = true
     }
-
-    /*
-    REMOVE THE BELOW BECAUSE IT IS USED ABOVE????
-    *
-    *
-    // set the round selected value from radio button into the array at the specific position
-    this.totalHolesPlayedArray[index] = roundSelected;
-
-    // reset back to 0 on each radio btn click otherwise totalHolesPlayed will hold onto a value and incorreectly add to current loop of round values 
-    this.totalHolesPlayed = 0;
-    this.totalHolesPlayedArray.forEach(round => {
-      this.totalHolesPlayed += round;
-    })
-    */
 
     userRoundScoreFormControl?.enable();
     userRoundScoreFormControl?.setValidators([
