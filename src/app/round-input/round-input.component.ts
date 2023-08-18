@@ -12,17 +12,16 @@ export class RoundInputComponent implements OnInit {
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
   roundTotal: number[] = [0, 0, 0];
-  /*
-  remove this in the future since on page load userRoundScore is disabled
-  and selecting a radio button will enable the round and also pass in the correct min
-  */
-  eighteenHoleRoundMin: number = 18;
   handicapIndex:  number = 0;
-  calcBtnDisabled: boolean = false;
+  calcBtnEnabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
+  roundInputsArrayIndex: number = 3; // starts at 3 because the first 3 formGroups are positions 0 - 2
+  totalHolesPlayedArray: number [] = [];
+  totalHolesPlayed: number = 0;
+  maxHolesAllowed: number = 360;
 
-  get roundInputs(): FormArray{
-    return <FormArray>this.roundForm.get('roundInputs')
+  get roundInputsArray(): FormArray{
+    return <FormArray>this.roundForm.get('roundInputsArray')
   }
 
   constructor(
@@ -32,61 +31,96 @@ export class RoundInputComponent implements OnInit {
   ngOnInit(): void {
 
     this.roundForm = this.fb.group({
-      roundInputs: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
+      roundInputsArray: this.fb.array([ this.buildRoundForm(0), this.buildRoundForm(1), this.buildRoundForm(2) ])
     })
   };
 
-  buildRoundForm() : FormGroup {
+  buildRoundForm(index: number) : FormGroup {
     const roundFormGroup = this.fb.group({
       userRoundScore: [
-        {
-          value: null, disabled: true
-        },
-        {
-        validators: [Validators.required, this.roundInputValidation(this.eighteenHoleRoundMin)],
-        updateOn: 'change'
-      }],
+        { value: null, disabled: true },
+        { updateOn: 'change' }
+      ],
       courseRating: [67.5, [Validators.required]],
       slopeRating: [117, [Validators.required]],
-      roundSelection: [null, [Validators.required]]
+      roundSelectionGroup: this.fb.group({
+        roundSelection: [null, [Validators.required]],
+      })
     });
 
-    // used to dynamically set validation for user round input based on radio button selection
-    roundFormGroup.controls.roundSelection.valueChanges.subscribe(value => {
-      // on radio btn change clear out the values for round score
-      roundFormGroup.controls.userRoundScore.setValue(null)
-
-      if (this.calcBtnDisabled === false) {
-        this.calcBtnDisabled = true
+    roundFormGroup.controls.roundSelectionGroup.controls.roundSelection.valueChanges.subscribe(value => {
+      // this is used to bypass issue that roundSelected COULD be null
+      let roundSelectionValue: number = 0;
+      if (value != null) {
+        roundSelectionValue = value
       }
-
-      if (value === 9 || value === 18) {
-        roundFormGroup.controls.userRoundScore.enable();
-        roundFormGroup.controls.userRoundScore.setValidators([
-          Validators.required,
-          Validators.min(value),
-          this.roundInputValidation(value)
-        ]);
-      }
-    
-      // onlySelf is an optional parameter which only runs updateValueAndValidity for this specific control
-      // since we are only setting validators for userRoundScore we only need to update validation runs for this control
-      roundFormGroup.controls.userRoundScore.updateValueAndValidity({ onlySelf: true });
-    })
-  
-    // enable calculate handicap btn if user calculates handicap and then makes a changes.  After initial calculation btn is disabled until a value is changed
-    roundFormGroup.valueChanges.subscribe(value => {
-      if(value && value.userRoundScore !== null && this.calcBtnDisabled) {
-          this.calcBtnDisabled = false;
-      }
+      this.checkIfMaxTotalRoundsAreMet(roundSelectionValue, index)
     });
-    
-    // calculate score differential whenever status changes
-    roundFormGroup.statusChanges.subscribe(status => {
+
+    /*
+      Enable calculate handicap btn if user calculates handicap and then makes a changes.  After initial calculation btn is disabled until a value is changed
+      Have the score differential calculated whenever the formGroup value change fires
+    */
+    roundFormGroup.valueChanges.subscribe(control => {
+      if (control && control.userRoundScore !== null && this.calcBtnEnabled) {
+        this.calcBtnEnabled = false;
+       }
       this.calcScoreDifferential();
     });
   
     return roundFormGroup;
+  }
+
+  checkIfMaxTotalRoundsAreMet(roundSelected: number, index: number) {
+    const difference = this.maxHolesAllowed - this.totalHolesPlayed
+    const userRoundScoreFormControl = this.roundInputsArray.controls[index].get('userRoundScore')
+
+    if (difference  <= 9) {
+      if (roundSelected == 18) {
+        console.log('You can ONLY enter in a 9 hole round.  STOP THEM FROM SELECTING 18 HOLE VALUE')
+        // below is used in event user selects 18 and the user round score is disabled, they hit 9 and enables the user round score
+        // and then hits 18 again and the user round score is STILL enabled
+        userRoundScoreFormControl?.setValue(null)
+        userRoundScoreFormControl?.disable()
+        // alert(`Your total holes played is ${this.totalHolesPlayed} so you can only enter a 9 hole round`)
+      } else {
+        this.handleRoundSelectionChange(roundSelected, index)
+      }
+    } else {
+      this.handleRoundSelectionChange(roundSelected, index)
+    }
+
+    // set the round selected value from radio button into the array at the specific position
+    this.totalHolesPlayedArray[index] = roundSelected;
+
+    // reset back to 0 on each radio btn click otherwise totalHolesPlayed will hold onto a value and incorreectly add to current loop of round values 
+    this.totalHolesPlayed = 0;
+    this.totalHolesPlayedArray.forEach(round => {
+      this.totalHolesPlayed += round;
+    })
+  }
+
+  // used to dynamically set validation for user round input based on radio button selection
+  handleRoundSelectionChange(roundSelected: number, index: number) {
+    const userRoundScoreFormControl = this.roundInputsArray.controls[index].get('userRoundScore')
+
+    // on radio btn change, clear out the value for user round score
+    userRoundScoreFormControl?.setValue(null)
+
+    if (this.calcBtnEnabled === false) {
+      this.calcBtnEnabled = true
+    }
+
+    userRoundScoreFormControl?.enable();
+    userRoundScoreFormControl?.setValidators([
+      Validators.required,
+      Validators.min(roundSelected),
+      this.roundInputValidation(roundSelected)
+    ]);
+    
+    // onlySelf is an optional parameter which only runs updateValueAndValidity for this specific control
+    // since we are only setting validators for userRoundScore we only need to update validation runs for this control
+    userRoundScoreFormControl?.updateValueAndValidity({ onlySelf: true });
   }
 
   calcScoreDifferential() {
@@ -98,7 +132,7 @@ export class RoundInputComponent implements OnInit {
     let slopeRating;
     let total;
 
-    this.roundInputs.controls.forEach((control) => {
+    this.roundInputsArray.controls.forEach((control) => {
       if (control.status === 'VALID' && control.get('userRoundScore')?.value !== null) {
         roundScoreInput = control.get('userRoundScore')?.value
         courseRating = control.get('courseRating')?.value
@@ -123,7 +157,7 @@ export class RoundInputComponent implements OnInit {
   }}
 
   calculateHandicapBtnClick() {
-    this.calcBtnDisabled = true;
+    this.calcBtnEnabled = true;
 
     let tempSum = 0;
     this.roundTotal.forEach((sum) => {
@@ -139,32 +173,38 @@ export class RoundInputComponent implements OnInit {
   }  
 
   addRound() {
-    if (this.roundInputs.length < 20) {
-      this.roundInputs.push(this.buildRoundForm())
+    // tweak below because it won't be based off number of rounds but number of holes played
+    if (this.totalHolesPlayed < this.maxHolesAllowed) {
+      this.roundInputsArray.push(this.buildRoundForm(this.roundInputsArrayIndex))
+      this.roundInputsArrayIndex++;
       this.roundTotal.push(0)
     } else {
-      alert('Maximum of 20 rounds allowed');
+      alert(`Maximum of ${this.maxHolesAllowed} holes allowed`);
     }
-
   }
 
   removeRound() {
-    if (this.roundInputs.length > 3) {
-      this.roundInputs.removeAt(-1)
+    if (this.roundInputsArray.length > 3) {
+      this.roundInputsArray.removeAt(-1)
       this.roundTotal.pop()
     } else {
       alert('Minimum of 3 rounds are required');
     }
-    this.calcBtnDisabled = false;
+    this.calcBtnEnabled = false;
+    const lastRoundInArray = this.totalHolesPlayedArray[this.totalHolesPlayedArray.length - 1]
+    this.totalHolesPlayed -= lastRoundInArray;
+    this.totalHolesPlayedArray.pop()
+    this.roundInputsArrayIndex--;
   }
 
   resetAllRounds() {
     this.roundForm.reset()
     // re-binding the formGroup will re-set the form array and the number of formControls back to it's default of 3
     this.roundForm = this.fb.group({
-      roundInputs: this.fb.array([ this.buildRoundForm(), this.buildRoundForm(), this.buildRoundForm() ])
+      roundInputsArray: this.fb.array([ this.buildRoundForm(0), this.buildRoundForm(1), this.buildRoundForm(2) ])
     })
     this.handicapIndex = 0;
+    this.roundInputsArrayIndex = 3;
   }
 
 }

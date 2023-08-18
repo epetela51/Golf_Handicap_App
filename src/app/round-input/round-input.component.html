@@ -1,7 +1,7 @@
 <div>
     <form [formGroup]="roundForm">
-        <div formArrayName="roundInputs"
-            *ngFor="let round of roundInputs.controls; let roundCount=index">
+        <div formArrayName="roundInputsArray"
+            *ngFor="let round of roundInputsArray.controls; let roundCount=index">
             <div [formGroupName]="roundCount">
 
                 <!-- Round number -->
@@ -11,35 +11,36 @@
                 </div>
 
                 <!-- 9 or 18 hole selection -->
-                <div class="form-group">
-                    <label>Round Selection: </label>
-                    <div>
-                        <label attr.for="{{'nineHoles' + roundCount}}">
-                            <input type="radio"
-                            id="{{'nineHoles' + roundCount}}"
-                            [value]=9
-                            formControlName="roundSelection">
-                            9 Holes
-                        </label>
+                <ng-container formGroupName="roundSelectionGroup">
+                    <div class="form-group">
+                        <label>Round Selection: </label>
+                        <div>
+                            <label attr.for="{{'nineHoles' + roundCount}}">
+                                <input type="radio"
+                                id="{{'nineHoles' + roundCount}}"
+                                [value]=9
+                                formControlName="roundSelection">
+                                9 Holes
+                            </label>
+                        </div>
+                        <div>
+                            <label attr.for="{{'eighteenHoles' + roundCount}}">
+                                <input type="radio"
+                                id="{{'eighteenHoles' + roundCount}}"
+                                [value]=18 
+                                formControlName="roundSelection">
+                                18 Holes
+                            </label>
+                        </div>
                     </div>
-                    <div>
-                        <label attr.for="{{'eighteenHoles' + roundCount}}">
-                            <input type="radio"
-                            id="{{'eighteenHoles' + roundCount}}"
-                            [value]=18 
-                            formControlName="roundSelection">
-                            18 Holes
-                        </label>
-                    </div>
-                </div>
-
+                </ng-container>
 
                 <!-- round score input -->
                 <div class="form-group">
                     <label attr.for="{{'userRoundScore' + roundCount}}">Round Score: </label>
-                    <input id="{{'userRoundScore' + roundCount}}" type="number" formControlName="userRoundScore" [min]="getMinScore(round.get('roundSelection')?.value)">
+                    <input id="{{'userRoundScore' + roundCount}}" type="number" formControlName="userRoundScore" [min]="getMinScore(round.get('roundSelectionGroup')?.get('roundSelection')?.value)">
                     <br>
-                    <span *ngIf="round.get('userRoundScore')?.errors?.['invalidForm']" style="font-weight: bold; color: red;">Enter in a round of at least {{round.get('roundSelection')?.value === 18 ? '18' : '9'}}</span>
+                    <span *ngIf="round.get('userRoundScore')?.errors?.['invalidForm']" style="font-weight: bold; color: red;">Enter in a round of at least {{round.get('roundSelectionGroup')?.get('roundSelection')?.value === 18 ? '18' : '9'}}</span>
                 </div>
 
                 <!-- course rating input -->
@@ -71,6 +72,10 @@
             
         </div>
 
+        Total Holes Played: {{totalHolesPlayed}}
+        <br>
+        <br>
+
         <button (click)='removeRound()'>Remove Last Round</button>
 
         <br>
@@ -79,13 +84,19 @@
 
         <br>
         <br>
-        <button (click)='addRound()'>Add Round</button>
+        <!-- can ONLY add another round if the form is valid
+        this prevents users from constantly adding empty rounds and surpassing the max allowed rounds/holes played
+        this needs to be added back after I am done testing the max rounds piece
+        this also prevents users from adding more rounds once the max holes allowed limit is reached --->
+        <button (click)='addRound()'[disabled]="!roundForm.valid || totalHolesPlayed >= maxHolesAllowed">
+            Add Round
+        </button>
 
         <br>
         <br>
 
         <button (click)='calculateHandicapBtnClick()'
-            [disabled]="calcBtnDisabled || !roundForm.valid" >
+            [disabled]="(calcBtnEnabled || !roundForm.valid) || totalHolesPlayed < 54" >
             Calculate Handicap
         </button>
 
@@ -94,7 +105,7 @@
     <br>
     
     <div>
-        <p *ngIf="!calcBtnDisabled && handicapIndex !== 0">{{recalcHandicapMsg}}</p>
+        <p *ngIf="!calcBtnEnabled && handicapIndex !== 0">{{recalcHandicapMsg}}</p>
         <p>Your Handicap Index: <span>{{handicapIndex}}</span> </p>
     </div>
 
