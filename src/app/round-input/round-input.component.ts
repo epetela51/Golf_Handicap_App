@@ -66,7 +66,6 @@ export class RoundInputComponent implements OnInit {
     */
     roundFormGroup.valueChanges.subscribe(control => {
       if (control && control.userRoundScore !== null && this.calcBtnEnabled) {
-        console.log('fireee')
         this.calcBtnEnabled = false;
        }
       this.calcScoreDifferential();
