@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl, FormArray, ValidatorFn } from "@angular/forms";
 // import { Round } from '../data/user-handicap-modal';
 
@@ -29,7 +29,6 @@ export class RoundInputComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.roundForm = this.fb.group({
       roundInputsArray: this.fb.array([ this.buildRoundForm(0), this.buildRoundForm(1), this.buildRoundForm(2) ])
     })
@@ -54,6 +53,10 @@ export class RoundInputComponent implements OnInit {
       if (value != null) {
         roundSelectionValue = value
       }
+      // reset handicap value if round selection changes
+      if (this.handicapIndex !== 0) {
+        this.handicapIndex = 0;
+      }
       this.checkIfMaxTotalRoundsAreMet(roundSelectionValue, index)
     });
 
@@ -63,6 +66,7 @@ export class RoundInputComponent implements OnInit {
     */
     roundFormGroup.valueChanges.subscribe(control => {
       if (control && control.userRoundScore !== null && this.calcBtnEnabled) {
+        console.log('fireee')
         this.calcBtnEnabled = false;
        }
       this.calcScoreDifferential();
