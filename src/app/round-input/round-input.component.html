@@ -35,6 +35,8 @@
                     </div>
                 </ng-container>
 
+                <!-- <p *ngIf="maxHolesExceeded && isLastFormGroup(roundCount)">YOU CAN'T ENTER 18 HOLES DUMMY</p> -->
+
                 <!-- round score input -->
                 <div class="form-group">
                     <label attr.for="{{'userRoundScore' + roundCount}}">Round Score: </label>
@@ -74,8 +76,11 @@
 
         Total Holes Played: {{totalHolesPlayed}}
         <br>
+        Holes Left until Max: {{maxHolesAllowed - totalHolesPlayed}}
         <br>
-
+        <!-- style the below with a different color or make it obviously.  Maybe user a modal or popup when using bootstrap? -->
+        <p *ngIf="maxHolesExceeded">You can NOT enter an 18 hole score as it will put you over the max number of holes</p>
+        <br>
         <button (click)='removeRound()'>Remove Last Round</button>
 
         <br>

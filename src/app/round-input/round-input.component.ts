@@ -19,6 +19,7 @@ export class RoundInputComponent implements OnInit {
   totalHolesPlayedArray: number [] = [];
   totalHolesPlayed: number = 0;
   maxHolesAllowed: number = 360;
+  maxHolesExceeded: boolean = false;
 
   get roundInputsArray(): FormArray{
     return <FormArray>this.roundForm.get('roundInputsArray')
@@ -47,6 +48,7 @@ export class RoundInputComponent implements OnInit {
       })
     });
 
+    // fires on change of radio button
     roundFormGroup.controls.roundSelectionGroup.controls.roundSelection.valueChanges.subscribe(value => {
       // this is used to bypass issue that roundSelected COULD be null
       let roundSelectionValue: number = 0;
@@ -56,6 +58,10 @@ export class RoundInputComponent implements OnInit {
       // reset handicap value if round selection changes
       if (this.handicapIndex !== 0) {
         this.handicapIndex = 0;
+      }
+      // reset boolean for message if user changes radio button
+      if (this.maxHolesExceeded == true) {
+        this.maxHolesExceeded = false
       }
       this.checkIfMaxTotalRoundsAreMet(roundSelectionValue, index)
     });
@@ -81,6 +87,7 @@ export class RoundInputComponent implements OnInit {
     if (difference  <= 9) {
       if (roundSelected == 18) {
         console.log('You can ONLY enter in a 9 hole round.  STOP THEM FROM SELECTING 18 HOLE VALUE')
+        this.maxHolesExceeded = true;
         // below is used in event user selects 18 and the user round score is disabled, they hit 9 and enables the user round score
         // and then hits 18 again and the user round score is STILL enabled
         userRoundScoreFormControl?.setValue(null)
@@ -208,6 +215,7 @@ export class RoundInputComponent implements OnInit {
     })
     this.handicapIndex = 0;
     this.roundInputsArrayIndex = 3;
+    this.maxHolesExceeded = false;
   }
 
 }
