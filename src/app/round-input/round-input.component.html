@@ -60,7 +60,7 @@
                 <!-- Round Sum -->
                 <div>
                     Score Differential: 
-                    <span *ngFor="let total of roundTotal; let sumCount = index">
+                    <span *ngFor="let total of roundScoreDifferential; let sumCount = index">
                         <!-- used to prevent multiple sums showing for a single round -->
                         <span *ngIf="roundCount === sumCount">
                             {{total}}

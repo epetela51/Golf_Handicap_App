@@ -11,12 +11,13 @@ export class RoundInputComponent implements OnInit {
 
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
-  roundTotal: number[] = [0, 0, 0];
+  roundScoreDifferential: number[] = [0, 0, 0];
   handicapIndex:  number = 0;
   calcBtnEnabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated'
   roundInputsArrayIndex: number = 3; // starts at 3 because the first 3 formGroups are positions 0 - 2
   totalHolesPlayedArray: number [] = [];
+  totalRoundsPlayed: number = 0;
   totalHolesPlayed: number = 0;
   maxHolesAllowed: number = 360;
   maxHolesExceeded: boolean = false;
@@ -108,6 +109,8 @@ export class RoundInputComponent implements OnInit {
     this.totalHolesPlayedArray.forEach(round => {
       this.totalHolesPlayed += round;
     })
+    // call below function to determine how many true 'rounds' of golf were played (i.e. how many rounds of 18 holes total)
+    this.totalRoundsPlayed = this.determineTrue18HoleRounds()
   }
 
   // used to dynamically set validation for user round input based on radio button selection
@@ -133,9 +136,17 @@ export class RoundInputComponent implements OnInit {
     userRoundScoreFormControl?.updateValueAndValidity({ onlySelf: true });
   }
 
+  roundInputValidation(score: number): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: boolean } | null => {
+      if ((control.touched || control.dirty) && control.value < score) {
+        return { 'invalidForm': true };
+      }
+      return null;
+  }}
+
   calcScoreDifferential() {
-    // reset the array holding the sums otherwise the array can double when doing a calc, adding a round and then doing another clac
-    this.roundTotal = [];
+    // reset the array holding the round score differentials otherwise the array can double when doing a calc, adding a round and then doing another clac
+    this.roundScoreDifferential = [];
 
     let roundScoreInput;
     let courseRating;
@@ -150,31 +161,47 @@ export class RoundInputComponent implements OnInit {
         // grab only up to the first decimal
         // Math.round requires you to take the number and multiply it by 10 and then take that number and divide by 10 to get 1 decimal
         total = Math.round(((113 / slopeRating) * (roundScoreInput - courseRating)) * 10) / 10
-        this.roundTotal.push(total)
+        this.roundScoreDifferential.push(total)
       } else {
         total = 0;
-        this.roundTotal.push(total)
+        this.roundScoreDifferential.push(total)
       }
     })
   }
 
-  roundInputValidation(score: number): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: boolean } | null => {
-      if ((control.touched || control.dirty) && control.value < score) {
-        return { 'invalidForm': true };
+  determineTrue18HoleRounds() {
+    let countOf18 = 0;
+    let countPairsOf9 = 0;
+
+    countOf18 = this.totalHolesPlayedArray.filter(num => num === 18).length;
+
+    this.totalHolesPlayedArray.forEach(number => {
+      if (number === 9) {
+        countPairsOf9++
       }
-      return null;
-  }}
+    })
+
+    // only count it if there is a pair of 9s.  i.e. 2 rounds of 9 counts as 1 | 3 rounds of 9 counts as 1 | 4 rounds of 9 count as 2
+    countPairsOf9 = Math.floor(countPairsOf9 / 2)
+    let totalTrueRounds = countOf18 + countPairsOf9;
+    return totalTrueRounds
+  }
 
   calculateHandicapBtnClick() {
+    console.log('total rounds played: ', this.totalRoundsPlayed)
+    console.log('Score Differential Array: ', this.roundScoreDifferential)
     this.calcBtnEnabled = true;
 
-    let tempSum = 0;
-    this.roundTotal.forEach((sum) => {
-      tempSum += sum
+    // create a switch(?) statement that takes the total rounds played and if it falls within a certain range calculate handicap
+    // this will be based on score differentials so either lowest 1 or average of a certain number based on total true rounds played
+    // the below will need to be adjusted as the handicap index is just taking the total number of rounds (regardless of if it's a 'true' round) and SHOULD be going off the total of the 'true' number of rounds
+
+    let tempScoreDifferential = 0;
+    this.roundScoreDifferential.forEach((sum) => {
+      tempScoreDifferential += sum
     })
     // toFixed makes it a string so need to convert it back to a number using Number()
-    this.handicapIndex = Number(((tempSum / this.roundTotal.length) * 0.96).toFixed(1))
+    this.handicapIndex = Number(((tempScoreDifferential / this.roundScoreDifferential.length) * 0.96).toFixed(1))
   }
 
   // dynamically sets the minimum value for user input based on round selection
@@ -187,7 +214,7 @@ export class RoundInputComponent implements OnInit {
     if (this.totalHolesPlayed < this.maxHolesAllowed) {
       this.roundInputsArray.push(this.buildRoundForm(this.roundInputsArrayIndex))
       this.roundInputsArrayIndex++;
-      this.roundTotal.push(0)
+      this.roundScoreDifferential.push(0)
     } else {
       alert(`Maximum of ${this.maxHolesAllowed} holes allowed`);
     }
@@ -196,7 +223,7 @@ export class RoundInputComponent implements OnInit {
   removeRound() {
     if (this.roundInputsArray.length > 3) {
       this.roundInputsArray.removeAt(-1)
-      this.roundTotal.pop()
+      this.roundScoreDifferential.pop()
     } else {
       alert('Minimum of 3 rounds are required');
     }
@@ -216,6 +243,7 @@ export class RoundInputComponent implements OnInit {
     this.handicapIndex = 0;
     this.roundInputsArrayIndex = 3;
     this.maxHolesExceeded = false;
+    this.totalHolesPlayedArray = [0]
   }
 
 }
