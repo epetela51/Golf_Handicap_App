@@ -76,10 +76,10 @@
 
         Total Holes Played: {{totalHolesPlayed}}
         <br>
-        Holes Left until Max: {{maxHolesAllowed - totalHolesPlayed}}
+        Holes Left until Max: {{maxHolesAllowed - totalHolesPlayed == -9 ? 'Max Holes Exceeded' : maxHolesAllowed - totalHolesPlayed}}
         <br>
         <!-- style the below with a different color or make it obviously.  Maybe user a modal or popup when using bootstrap? -->
-        <p *ngIf="maxHolesExceeded">You can NOT enter an 18 hole score as it will put you over the max number of holes</p>
+        <p *ngIf="maxHolesExceeded">You can NOT enter an 18 hole score as it will put you over the max number of holes which is {{maxHolesAllowed}} holes</p>
         <br>
         <button (click)='removeRound()'>Remove Last Round</button>
 
