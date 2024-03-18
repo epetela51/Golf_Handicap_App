@@ -151,7 +151,7 @@ export class RoundInputComponent implements OnInit {
     let roundScoreInput;
     let courseRating;
     let slopeRating;
-    let total;
+    let differential;
 
     this.roundInputsArray.controls.forEach((control) => {
       if (control.status === 'VALID' && control.get('userRoundScore')?.value !== null) {
@@ -160,11 +160,11 @@ export class RoundInputComponent implements OnInit {
         slopeRating = control.get('slopeRating')?.value
         // grab only up to the first decimal
         // Math.round requires you to take the number and multiply it by 10 and then take that number and divide by 10 to get 1 decimal
-        total = Math.round(((113 / slopeRating) * (roundScoreInput - courseRating)) * 10) / 10
-        this.roundScoreDifferentialArray.push(total)
+        differential = Math.round(((113 / slopeRating) * (roundScoreInput - courseRating)) * 10) / 10
+        this.roundScoreDifferentialArray.push(differential)
       } else {
-        total = 0;
-        this.roundScoreDifferentialArray.push(total)
+        differential = 0;
+        this.roundScoreDifferentialArray.push(differential)
       }
     })
   }
