@@ -40,7 +40,7 @@ export class RoundInputComponent implements OnInit {
     const roundFormGroup = this.fb.group({
       userRoundScore: [
         { value: null, disabled: true },
-        { updateOn: 'change' }
+        { updateOn: 'blur' }
       ],
       courseRating: [67.5, [Validators.required]],
       slopeRating: [117, [Validators.required]],
