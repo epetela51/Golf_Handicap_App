@@ -118,13 +118,13 @@ export class RoundInputComponent implements OnInit {
     const userRoundScoreFormControl = this.roundInputsArray.controls[index].get('userRoundScore')
 
     // on radio btn change, clear out the value for user round score
-    userRoundScoreFormControl?.setValue(null)
+    userRoundScoreFormControl?.setValue(null, { emitEvent: false }) // emitEvent: false to prevent formGroup observable from firing
 
     if (this.calcBtnEnabled === false) {
       this.calcBtnEnabled = true
     }
 
-    userRoundScoreFormControl?.enable();
+    userRoundScoreFormControl?.enable({ emitEvent: false });
     userRoundScoreFormControl?.setValidators([
       Validators.required,
       Validators.min(roundSelected),
