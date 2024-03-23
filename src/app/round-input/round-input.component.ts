@@ -42,8 +42,8 @@ export class RoundInputComponent implements OnInit {
         { value: null, disabled: true },
         { updateOn: 'blur' }
       ],
-      courseRating: [67.5, [Validators.required]],
-      slopeRating: [117, [Validators.required]],
+      courseRating: [67.5, {updateOn: 'blur'}, [Validators.required]],
+      slopeRating: [117, {updateOn: 'blur'}, [Validators.required]],
       roundSelectionGroup: this.fb.group({
         roundSelection: [null, [Validators.required]],
       })
