@@ -38,7 +38,7 @@
                 <!-- round score input -->
                 <div class="form-group">
                     <label attr.for="{{'userRoundScore' + roundCount}}">Round Score: </label>
-                    <input id="{{'userRoundScore' + roundCount}}" type="number" formControlName="userRoundScore" [min]="getMinScore(round.get('roundSelectionGroup')?.get('roundSelection')?.value)">
+                    <input id="{{'userRoundScore' + roundCount}}" type="number" formControlName="userRoundScore">
                     <br>
                     <span *ngIf="round.get('userRoundScore')?.errors?.['invalidForm']" style="font-weight: bold; color: red;">Enter in a round of at least {{round.get('roundSelectionGroup')?.get('roundSelection')?.value === 18 ? '18' : '9'}}</span>
                 </div>

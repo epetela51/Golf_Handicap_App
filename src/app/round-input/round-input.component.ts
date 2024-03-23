@@ -91,7 +91,7 @@ export class RoundInputComponent implements OnInit {
         this.maxHolesExceeded = true;
         // below is used in event user selects 18 and the user round score is disabled, they hit 9 and enables the user round score
         // and then hits 18 again and the user round score is STILL enabled
-        userRoundScoreFormControl?.setValue(null)
+        userRoundScoreFormControl?.setValue(null, {emitEvent: false})
         userRoundScoreFormControl?.disable()
         // alert(`Your total holes played is ${this.totalHolesPlayed} so you can only enter a 9 hole round`)
       } else {
@@ -118,7 +118,7 @@ export class RoundInputComponent implements OnInit {
     const userRoundScoreFormControl = this.roundInputsArray.controls[index].get('userRoundScore')
 
     // on radio btn change, clear out the value for user round score
-    userRoundScoreFormControl?.setValue(null, { emitEvent: false }) // emitEvent: false to prevent formGroup observable from firing
+    userRoundScoreFormControl?.setValue(null, { emitEvent: false }) // emitEvent: false ==> to prevent formGroup observable from firing
 
     if (this.calcBtnEnabled === false) {
       this.calcBtnEnabled = true
@@ -204,11 +204,6 @@ export class RoundInputComponent implements OnInit {
     // toFixed makes it a string so need to convert it back to a number using Number()
     this.handicapIndex = Number(((totalScoreDifferential / this.roundScoreDifferentialArray.length) * 0.96).toFixed(1))
   }
-
-  // dynamically sets the minimum value for user input based on round selection
-  getMinScore(roundSelectionValue: number): number {
-    return roundSelectionValue === 9 ? 9 : 18;
-  }  
 
   addRound() {
     // tweak below because it won't be based off number of rounds but number of holes played
