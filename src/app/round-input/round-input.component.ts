@@ -218,6 +218,10 @@ export class RoundInputComponent implements OnInit {
 
     // create a switch(?) statement that takes the total rounds played and if it falls within a certain range calculate handicap
     // this will be based on score differentials so either lowest 1 or average of a certain number based on total true rounds played
+
+    // example of current state: enter a round of 9 then 3 rounds of 18.  Handicap is calculated based off all these rounds but
+    // should only be based off the 3 rounds of 18.  However it's taking that lone round of 9 into consideration
+
     // the below will need to be adjusted as the handicap index is just taking the total number of rounds (regardless of if it's a 'true' round) and SHOULD be going off the total of the 'true' number of rounds
 
     let totalScoreDifferential = 0;
