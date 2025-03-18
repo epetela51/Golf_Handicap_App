@@ -44,7 +44,7 @@ export class RoundInputComponent implements OnInit {
     });
   }
 
-  buildRoundForm(index: number): FormGroup {
+  buildRoundForm(formGroupIndex: number): FormGroup {
     const roundFormGroup = this.fb.group({
       userRoundScore: [{ value: null, disabled: true }, { updateOn: 'blur' }],
       courseRating: [
@@ -76,7 +76,7 @@ export class RoundInputComponent implements OnInit {
         if (this.maxHolesExceeded == true) {
           this.maxHolesExceeded = false;
         }
-        this.checkIfMaxTotalRoundsAreMet(roundSelectionValue, index);
+        this.checkIfMaxTotalRoundsAreMet(roundSelectionValue, formGroupIndex);
       }
     );
 
@@ -88,16 +88,16 @@ export class RoundInputComponent implements OnInit {
       if (control && control.userRoundScore !== null && this.calcBtnEnabled) {
         this.calcBtnEnabled = false;
       }
-      this.calcScoreDifferential();
+      this.calcScoreDifferential(formGroupIndex);
     });
 
     return roundFormGroup;
   }
 
-  checkIfMaxTotalRoundsAreMet(roundSelected: number, index: number) {
+  checkIfMaxTotalRoundsAreMet(roundSelected: number, formGroupIndex: number) {
     const difference = this.maxHolesAllowed - this.totalHolesPlayed;
     const userRoundScoreFormControl =
-      this.roundInputsArray.controls[index].get('userRoundScore');
+      this.roundInputsArray.controls[formGroupIndex].get('userRoundScore');
 
     if (difference <= 9) {
       if (roundSelected == 18) {
@@ -111,14 +111,14 @@ export class RoundInputComponent implements OnInit {
         userRoundScoreFormControl?.disable();
         // alert(`Your total holes played is ${this.totalHolesPlayed} so you can only enter a 9 hole round`)
       } else {
-        this.handleRoundSelectionChange(roundSelected, index);
+        this.handleRoundSelectionChange(roundSelected, formGroupIndex);
       }
     } else {
-      this.handleRoundSelectionChange(roundSelected, index);
+      this.handleRoundSelectionChange(roundSelected, formGroupIndex);
     }
 
     // set the round selected value from radio button into the array at the specific position
-    this.totalHolesPlayedArray[index] = roundSelected;
+    this.totalHolesPlayedArray[formGroupIndex] = roundSelected;
 
     // reset back to 0 on each radio btn click otherwise totalHolesPlayed will hold onto a value and incorreectly add to current loop of round values
     this.totalHolesPlayed = 0;
@@ -130,9 +130,9 @@ export class RoundInputComponent implements OnInit {
   }
 
   // used to dynamically set validation for user round input based on radio button selection
-  handleRoundSelectionChange(roundSelected: number, index: number) {
+  handleRoundSelectionChange(roundSelected: number, formGroupIndex: number) {
     const userRoundScoreFormControl =
-      this.roundInputsArray.controls[index].get('userRoundScore');
+      this.roundInputsArray.controls[formGroupIndex].get('userRoundScore');
 
     // on radio btn change, clear out the value for user round score
     userRoundScoreFormControl?.setValue(null, { emitEvent: false }); // emitEvent: false ==> to prevent formGroup observable from firing
@@ -162,35 +162,55 @@ export class RoundInputComponent implements OnInit {
     };
   }
 
-  calcScoreDifferential() {
-    // reset the array holding the round score differentials otherwise the array can double when doing a calc, adding a round and then doing another clac
-    this.roundScoreDifferentialArray = [];
+  calcScoreDifferential(formGroupIndex: number) {
+    let controlSelected = this.roundInputsArray.controls[formGroupIndex];
 
-    let roundScoreInput;
-    let courseRating;
-    let slopeRating;
-    let differential;
+    let roundScoreInputValue = controlSelected.get('userRoundScore')?.value;
+    let courseRatingValue = controlSelected.get('courseRating')?.value;
+    let slopeRatingValue = controlSelected.get('slopeRating')?.value;
+    let roundSelected = controlSelected
+      .get('roundSelectionGroup')
+      ?.get('roundSelection')?.value;
 
-    this.roundInputsArray.controls.forEach((control) => {
-      if (
-        control.status === 'VALID' &&
-        control.get('userRoundScore')?.value !== null
-      ) {
-        roundScoreInput = control.get('userRoundScore')?.value;
-        courseRating = control.get('courseRating')?.value;
-        slopeRating = control.get('slopeRating')?.value;
-        // grab only up to the first decimal
-        // Math.round requires you to take the number and multiply it by 10 and then take that number and divide by 10 to get 1 decimal
-        differential =
-          Math.round(
-            (113 / slopeRating) * (roundScoreInput - courseRating) * 10
-          ) / 10;
-        this.roundScoreDifferentialArray.push(differential);
+    let roundDifferential;
+
+    if (controlSelected.status === 'VALID' && roundScoreInputValue !== null) {
+      roundDifferential =
+        Math.round(
+          (113 / slopeRatingValue) *
+            (roundScoreInputValue - courseRatingValue) *
+            10
+        ) / 10;
+
+      if (roundSelected === 18) {
+        this.roundScoreDifferentialArray[formGroupIndex] = roundDifferential;
       } else {
-        differential = 0;
-        this.roundScoreDifferentialArray.push(differential);
+        this.calculate9HoleDifferential(roundScoreInputValue, formGroupIndex);
       }
-    });
+      // this.roundScoreDifferentialArray[formGroupIndex] = roundDifferential;
+    } else {
+      roundDifferential = 0;
+      this.roundScoreDifferentialArray[formGroupIndex] = roundDifferential;
+    }
+  }
+
+  tempScoreArray: number[] = [];
+
+  calculate9HoleDifferential(roundScore: number, formGroupInex: number) {
+    console.log(
+      'calculating the 9 hole differential with a score of: ',
+      roundScore
+    );
+    // need to look into the below as changing an existing round just adds a value to the array
+    // ex: enter 9 round score of 23 and then 33.  If I go back to the 23 and make it a 24 it add's it to the array
+    // the array then has 23, 33 and 24 (even though only 2 rounds of 9 have been entered)
+    // using formGroupIndex can put 'empty' or 'null' into the array.  Look into splice?  Issue will be the length
+    // if the array has 2 number that are NOT null/empty then do the next step?????
+    this.tempScoreArray.push(roundScore);
+    console.log('9 hole array: ', this.tempScoreArray);
+    if (this.tempScoreArray.length === 2) {
+      console.log('add to the main array and clear');
+    }
   }
 
   determineTrue18HoleRounds() {
@@ -225,9 +245,8 @@ export class RoundInputComponent implements OnInit {
     // the below will need to be adjusted as the handicap index is just taking the total number of rounds (regardless of if it's a 'true' round) and SHOULD be going off the total of the 'true' number of rounds
 
     let totalScoreDifferential = 0;
-    this.roundScoreDifferentialArray.forEach((sum) => {
-      totalScoreDifferential += sum;
-      console.log('totalScoreDifferential: ', totalScoreDifferential);
+    this.roundScoreDifferentialArray.forEach((roundScoreDifferential) => {
+      totalScoreDifferential += roundScoreDifferential;
     });
     // toFixed makes it a string so need to convert it back to a number using Number()
     this.handicapIndex = Number(
