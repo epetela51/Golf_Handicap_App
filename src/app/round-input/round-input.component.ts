@@ -18,11 +18,12 @@ export class RoundInputComponent implements OnInit {
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
   roundScoreDifferentialArray: number[] = [0, 0, 0];
+  nineHoleDifferentialArray: number[] = []; // need this globally so when the function is called it doesn't wipe out what's in the array
+  totalHolesPlayedArray: number[] = [];
   handicapIndex: number = 0;
   calcBtnEnabled: boolean = false;
   recalcHandicapMsg: String = 'Handicap needs to be re-calculated';
   roundInputsArrayIndex: number = 3; // starts at 3 because the first 3 formGroups are positions 0 - 2
-  totalHolesPlayedArray: number[] = [];
   totalRoundsPlayed: number = 0;
   totalHolesPlayed: number = 0;
   maxHolesAllowed: number = 360;
@@ -182,35 +183,40 @@ export class RoundInputComponent implements OnInit {
             10
         ) / 10;
 
-      if (roundSelected === 18) {
-        this.roundScoreDifferentialArray[formGroupIndex] = roundDifferential;
-      } else {
-        this.calculate9HoleDifferential(roundScoreInputValue, formGroupIndex);
+      // used to calculate the total differential for 2 rounds of 9 (need 1 total 18 round differential for the handicap calculation i.e 2 rounds of 9)
+      if (roundSelected === 9) {
+        this.calculate9HoleDifferential(formGroupIndex, roundDifferential);
       }
-      // this.roundScoreDifferentialArray[formGroupIndex] = roundDifferential;
+      // this is needed to push the individual 9 hole differential into the array to be displayed on the UI
+      this.roundScoreDifferentialArray[formGroupIndex] = roundDifferential;
     } else {
       roundDifferential = 0;
       this.roundScoreDifferentialArray[formGroupIndex] = roundDifferential;
     }
   }
 
-  tempScoreArray: number[] = [];
+  calculate9HoleDifferential(
+    formGroupInex: number,
+    nineHoleDifferential: number
+  ) {
+    let sumOfNineHoleDifferentials = 0;
 
-  calculate9HoleDifferential(roundScore: number, formGroupInex: number) {
-    console.log(
-      'calculating the 9 hole differential with a score of: ',
-      roundScore
-    );
-    // need to look into the below as changing an existing round just adds a value to the array
-    // ex: enter 9 round score of 23 and then 33.  If I go back to the 23 and make it a 24 it add's it to the array
-    // the array then has 23, 33 and 24 (even though only 2 rounds of 9 have been entered)
-    // using formGroupIndex can put 'empty' or 'null' into the array.  Look into splice?  Issue will be the length
-    // if the array has 2 number that are NOT null/empty then do the next step?????
-    this.tempScoreArray.push(roundScore);
-    console.log('9 hole array: ', this.tempScoreArray);
-    if (this.tempScoreArray.length === 2) {
-      console.log('add to the main array and clear');
+    this.nineHoleDifferentialArray[formGroupInex] = nineHoleDifferential;
+    console.log('placeholder array: ', this.nineHoleDifferentialArray);
+
+    // temp array used to remove any empty values from nineHoleDifferentialArray so we can get the true number of 9 holes played
+    // for caluclation of final 18 hole differentials
+    const tempArray = this.nineHoleDifferentialArray.filter(() => true);
+
+    if (tempArray.length === 2) {
+      tempArray.forEach((roundDiff) => {
+        sumOfNineHoleDifferentials += roundDiff;
+      });
+      this.nineHoleDifferentialArray = [];
     }
+
+    sumOfNineHoleDifferentials =
+      Math.round(sumOfNineHoleDifferentials * 100) / 100;
   }
 
   determineTrue18HoleRounds() {
