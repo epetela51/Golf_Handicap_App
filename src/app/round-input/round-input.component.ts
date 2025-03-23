@@ -19,6 +19,7 @@ export class RoundInputComponent implements OnInit {
   roundForm: FormGroup;
   roundScoreDifferentialArray: number[] = [0, 0, 0];
   nineHoleDifferentialArray: number[] = []; // need this globally so when the function is called it doesn't wipe out what's in the array
+  finalDifferentialArray: number[] = []; // array holding both 18 hole differentials and combined 9 hole differentials (i.e 2 rounds of 9)
   totalHolesPlayedArray: number[] = [];
   handicapIndex: number = 0;
   calcBtnEnabled: boolean = false;
@@ -185,7 +186,9 @@ export class RoundInputComponent implements OnInit {
 
       // used to calculate the total differential for 2 rounds of 9 (need 1 total 18 round differential for the handicap calculation i.e 2 rounds of 9)
       if (roundSelected === 9) {
-        this.calculate9HoleDifferential(formGroupIndex, roundDifferential);
+        this.calculate9HoleDifferential(roundDifferential);
+      } else {
+        this.finalDifferentialArray.push(roundDifferential);
       }
       // this is needed to push the individual 9 hole differential into the array to be displayed on the UI
       this.roundScoreDifferentialArray[formGroupIndex] = roundDifferential;
@@ -195,14 +198,10 @@ export class RoundInputComponent implements OnInit {
     }
   }
 
-  calculate9HoleDifferential(
-    formGroupInex: number,
-    nineHoleDifferential: number
-  ) {
+  calculate9HoleDifferential(nineHoleDifferential: number) {
     let sumOfNineHoleDifferentials = 0;
 
-    this.nineHoleDifferentialArray[formGroupInex] = nineHoleDifferential;
-    console.log('placeholder array: ', this.nineHoleDifferentialArray);
+    this.nineHoleDifferentialArray.push(nineHoleDifferential);
 
     // temp array used to remove any empty values from nineHoleDifferentialArray so we can get the true number of 9 holes played
     // for caluclation of final 18 hole differentials
@@ -212,11 +211,14 @@ export class RoundInputComponent implements OnInit {
       tempArray.forEach((roundDiff) => {
         sumOfNineHoleDifferentials += roundDiff;
       });
+
+      sumOfNineHoleDifferentials =
+        Math.round(sumOfNineHoleDifferentials * 100) / 100;
+
+      this.finalDifferentialArray.push(sumOfNineHoleDifferentials);
+
       this.nineHoleDifferentialArray = [];
     }
-
-    sumOfNineHoleDifferentials =
-      Math.round(sumOfNineHoleDifferentials * 100) / 100;
   }
 
   determineTrue18HoleRounds() {
@@ -251,6 +253,8 @@ export class RoundInputComponent implements OnInit {
     // the below will need to be adjusted as the handicap index is just taking the total number of rounds (regardless of if it's a 'true' round) and SHOULD be going off the total of the 'true' number of rounds
 
     let totalScoreDifferential = 0;
+
+    // utilize a new array which has the 18 hole differential and any combined 9 hole differential ???
     this.roundScoreDifferentialArray.forEach((roundScoreDifferential) => {
       totalScoreDifferential += roundScoreDifferential;
     });
@@ -305,5 +309,6 @@ export class RoundInputComponent implements OnInit {
     this.roundInputsArrayIndex = 3;
     this.maxHolesExceeded = false;
     this.totalHolesPlayedArray = [0];
+    this.nineHoleDifferentialArray = [];
   }
 }
