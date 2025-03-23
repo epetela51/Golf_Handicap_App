@@ -203,12 +203,8 @@ export class RoundInputComponent implements OnInit {
 
     this.nineHoleDifferentialArray.push(nineHoleDifferential);
 
-    // temp array used to remove any empty values from nineHoleDifferentialArray so we can get the true number of 9 holes played
-    // for caluclation of final 18 hole differentials
-    const tempArray = this.nineHoleDifferentialArray.filter(() => true);
-
-    if (tempArray.length === 2) {
-      tempArray.forEach((roundDiff) => {
+    if (this.nineHoleDifferentialArray.length === 2) {
+      this.nineHoleDifferentialArray.forEach((roundDiff) => {
         sumOfNineHoleDifferentials += roundDiff;
       });
 
