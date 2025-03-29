@@ -187,8 +187,10 @@ export class RoundInputComponent implements OnInit {
       // used to calculate the total differential for 2 rounds of 9 (need 1 total 18 round differential for the handicap calculation i.e 2 rounds of 9)
       if (roundSelected === 9) {
         this.calculate9HoleDifferential(roundDifferential);
+        this.calculate9HoleDifferential(formGroupIndex, roundDifferential);
       } else {
         this.finalDifferentialArray.push(roundDifferential);
+        this.finalDifferentialArray[formGroupIndex] = roundDifferential;
       }
       // this is needed to push the individual 9 hole differential into the array to be displayed on the UI
       this.roundScoreDifferentialArray[formGroupIndex] = roundDifferential;
@@ -276,6 +278,7 @@ export class RoundInputComponent implements OnInit {
     }
   }
 
+  // look into logic for removing a 9 hole round in terms of the 9 hole round differential!
   removeRound() {
     if (this.roundInputsArray.length > 3) {
       this.roundInputsArray.removeAt(-1);
@@ -306,5 +309,6 @@ export class RoundInputComponent implements OnInit {
     this.maxHolesExceeded = false;
     this.totalHolesPlayedArray = [0];
     this.nineHoleDifferentialArray = [];
+    this.finalDifferentialArray = [];
   }
 }
