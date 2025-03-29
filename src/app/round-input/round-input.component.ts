@@ -17,8 +17,9 @@ import {
 export class RoundInputComponent implements OnInit {
   // defines form model. Template will bind to this root form model
   roundForm: FormGroup;
-  roundScoreDifferentialArray: number[] = [0, 0, 0];
+  roundScoreDifferentialArray: number[] = [0, 0, 0]; // used to display the differential for each individual round that's entered
   nineHoleDifferentialArray: number[] = []; // need this globally so when the function is called it doesn't wipe out what's in the array
+  previousFilteredDiffArray: number[] = []; // used to track changes to existing 9 hole score differentials
   finalDifferentialArray: number[] = []; // array holding both 18 hole differentials and combined 9 hole differentials (i.e 2 rounds of 9)
   totalHolesPlayedArray: number[] = [];
   handicapIndex: number = 0;
@@ -186,10 +187,8 @@ export class RoundInputComponent implements OnInit {
 
       // used to calculate the total differential for 2 rounds of 9 (need 1 total 18 round differential for the handicap calculation i.e 2 rounds of 9)
       if (roundSelected === 9) {
-        this.calculate9HoleDifferential(roundDifferential);
         this.calculate9HoleDifferential(formGroupIndex, roundDifferential);
       } else {
-        this.finalDifferentialArray.push(roundDifferential);
         this.finalDifferentialArray[formGroupIndex] = roundDifferential;
       }
       // this is needed to push the individual 9 hole differential into the array to be displayed on the UI
@@ -200,23 +199,59 @@ export class RoundInputComponent implements OnInit {
     }
   }
 
-  calculate9HoleDifferential(nineHoleDifferential: number) {
-    let sumOfNineHoleDifferentials = 0;
+  calculate9HoleDifferential(
+    formGroupIndex: number,
+    nineHoleDifferential: number
+  ) {
+    this.nineHoleDifferentialArray[formGroupIndex] = nineHoleDifferential;
 
-    this.nineHoleDifferentialArray.push(nineHoleDifferential);
+    /**
+     * filteredDiffArray used to remove any empty values from nineHoleDifferentialArray so we can
+     * get the true number of 9 holes played in order to do calculation for final total 18 hole differentials
+     * By inserting a differential in the array positionally there is the potential of being 'empty' values in the array
+     * this filteredDiffArray uses a filter to remove those empty values so we have a true array of numbers
+     */
+    const filteredDiffArray = this.nineHoleDifferentialArray.filter(
+      (value) => value !== undefined
+    );
 
-    if (this.nineHoleDifferentialArray.length === 2) {
-      this.nineHoleDifferentialArray.forEach((roundDiff) => {
-        sumOfNineHoleDifferentials += roundDiff;
-      });
+    // Iterate through the filtered array in pairs of two
+    for (let i = 0; i < filteredDiffArray.length; i += 2) {
+      if (filteredDiffArray[i + 1] !== undefined) {
+        // Sum the current pair of 9-hole differentials
+        const summedDifferential =
+          Math.round((filteredDiffArray[i] + filteredDiffArray[i + 1]) * 100) /
+          100;
 
-      sumOfNineHoleDifferentials =
-        Math.round(sumOfNineHoleDifferentials * 100) / 100;
-
-      this.finalDifferentialArray.push(sumOfNineHoleDifferentials);
-
-      this.nineHoleDifferentialArray = [];
+        // Maintain the position in the finalDifferentialArray
+        const position = Math.floor(i / 2); // THIS WORKS BEST SO FAR
+        // const position = i + 1;
+        // const position = this.findNextAvailableIndex(i + 1);
+        // Find the position in the finalDifferentialArray corresponding to the second 9-hole value
+        // const position = this.nineHoleDifferentialArray.indexOf(
+        //   filteredDiffArray[i + 1]
+        // );
+        console.log('position: ', position);
+        this.finalDifferentialArray[position] = summedDifferential;
+      }
     }
+
+    console.log(
+      'Updated FINAL DIFFERENTIAL ARRAY: ',
+      this.finalDifferentialArray
+    );
+  }
+
+  /**
+   * Helper function to find the next available index in the finalDifferentialArray
+   * that is not already occupied by an 18-hole value.
+   */
+  private findNextAvailableIndex(startIndex: number): number {
+    let index = startIndex;
+    while (this.finalDifferentialArray[index] !== undefined) {
+      index++;
+    }
+    return index;
   }
 
   determineTrue18HoleRounds() {
@@ -240,6 +275,10 @@ export class RoundInputComponent implements OnInit {
   calculateHandicapBtnClick() {
     console.log('total rounds played: ', this.totalRoundsPlayed);
     console.log('Score Differential Array: ', this.roundScoreDifferentialArray);
+    console.log(
+      'FINAL differential Array for 18 and 9s: ',
+      this.finalDifferentialArray
+    );
     this.calcBtnEnabled = true;
 
     // create a switch(?) statement that takes the total rounds played and if it falls within a certain range calculate handicap
