@@ -15,8 +15,7 @@ import {
   styleUrls: ['./round-input.component.css'],
 })
 export class RoundInputComponent implements OnInit {
-  // defines form model. Template will bind to this root form model
-  roundForm: FormGroup;
+  roundForm: FormGroup; // defines form model. Template will bind to this root form model
   roundScoreDifferentialArray: number[] = [0, 0, 0]; // used to display the differential for each individual round that's entered
   nineHoleDifferentialArray: number[] = []; // need this globally so when the function is called it doesn't wipe out what's in the array
   previousFilteredDiffArray: number[] = []; // used to track changes to existing 9 hole score differentials
