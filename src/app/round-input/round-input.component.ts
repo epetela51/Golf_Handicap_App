@@ -184,11 +184,9 @@ export class RoundInputComponent implements OnInit {
             10
         ) / 10;
 
-      // used to calculate the total differential for 2 rounds of 9 (need 1 total 18 round differential for the handicap calculation i.e 2 rounds of 9)
       if (roundSelected === 9) {
         this.calculate9HoleDifferential(formGroupIndex, roundDifferential);
       } else {
-        console.log('index; ', formGroupIndex);
         this.eighteenHoleDifferentialArray[formGroupIndex] = roundDifferential;
       }
       // this is needed to push the individual 9 hole differential into the array to be displayed on the UI
@@ -199,6 +197,12 @@ export class RoundInputComponent implements OnInit {
     }
   }
 
+  /**
+   * Used to calculate the total differential for 2 combined 9 hole rounds
+   * This is needed for caluculating the final handicap index
+   * @param formGroupIndex - index of the formGroup in the formArray.  Used when updated existing 9 hole differential to override the value in the array at the correct position
+   * @param nineHoleDifferential - the individual 9 hole differential to be added to the array
+   */
   calculate9HoleDifferential(
     formGroupIndex: number,
     nineHoleDifferential: number
