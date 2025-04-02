@@ -279,6 +279,7 @@ export class RoundInputComponent implements OnInit {
 
     let finalDifferentialArray = this.eighteenHoleDifferentialArray.concat(
       this.nineHoleTotalDifferentialArray
+    );
 
     console.log(
       'Final Differential Array: ',
