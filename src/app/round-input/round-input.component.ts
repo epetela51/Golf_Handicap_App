@@ -257,48 +257,65 @@ export class RoundInputComponent implements OnInit {
   }
 
   calculateHandicapBtnClick() {
-    // console.log('total rounds played: ', this.totalRoundsPlayed);
-    // console.log('Score Differential Array: ', this.roundScoreDifferentialArray);
-    console.log(
-      '18 hole differentials: ',
-      this.eighteenHoleDifferentialArray.filter((value) => value !== undefined)
-    );
-    console.log(
-      '9 hole differentials: ',
-      this.nineHoleTotalDifferentialArray.filter((value) => value !== undefined)
-    );
     this.calcBtnEnabled = true;
 
-    // create a switch(?) statement that takes the total rounds played and if it falls within a certain range calculate handicap
-    // this will be based on score differentials so either lowest 1 or average of a certain number based on total true rounds played
+    // combined the 9 and 18 hole differentials into one array and have it be sorted so the lowest values are first
+    let combinedDifferentialArray = this.eighteenHoleDifferentialArray
+      .filter((value) => value !== undefined)
+      .concat(
+        this.nineHoleTotalDifferentialArray.filter(
+          (value) => value !== undefined
+        )
+      )
+      .sort((a, b) => a - b);
 
-    // example of current state: enter a round of 9 then 3 rounds of 18.  Handicap is calculated based off all these rounds but
-    // should only be based off the 3 rounds of 18.  However it's taking that lone round of 9 into consideration
+    // based on the number of differentials, grab the lowest values
+    switch (combinedDifferentialArray.length) {
+      case 3:
+      case 4:
+      case 5:
+        combinedDifferentialArray = combinedDifferentialArray.slice(0, 1);
+        break;
+      case 6:
+      case 7:
+      case 8:
+        combinedDifferentialArray = combinedDifferentialArray.slice(0, 2);
+        break;
+      case 9:
+      case 10:
+      case 11:
+        combinedDifferentialArray = combinedDifferentialArray.slice(0, 3);
+        break;
+      case 12:
+      case 13:
+      case 14:
+        combinedDifferentialArray = combinedDifferentialArray.slice(0, 4);
+        break;
+      case 15:
+      case 16:
+        combinedDifferentialArray = combinedDifferentialArray.slice(0, 5);
+        break;
+      case 17:
+      case 18:
+        combinedDifferentialArray = combinedDifferentialArray.slice(0, 6);
+        break;
+      case 19:
+        combinedDifferentialArray = combinedDifferentialArray.slice(0, 7);
+        break;
+      case 20:
+        combinedDifferentialArray = combinedDifferentialArray.slice(0, 8);
+        break;
+      // no default
+    }
 
-    // the below will need to be adjusted as the handicap index is just taking the total number of rounds (regardless of if it's a 'true' round) and SHOULD be going off the total of the 'true' number of rounds
-
-    let finalDifferentialArray = this.eighteenHoleDifferentialArray.concat(
-      this.nineHoleTotalDifferentialArray
+    let summedUpDifferentials = combinedDifferentialArray.reduce(
+      (total, currentValue) => total + currentValue,
+      0
     );
 
-    console.log(
-      'Final Differential Array: ',
-      finalDifferentialArray.filter((value) => value !== undefined)
-    );
+    let average = summedUpDifferentials / combinedDifferentialArray.length;
 
-    let totalScoreDifferential = 0;
-
-    // utilize a new array which has the 18 hole differential and any combined 9 hole differential ???
-    finalDifferentialArray.forEach((roundScoreDifferential) => {
-      totalScoreDifferential += roundScoreDifferential;
-    });
-    // toFixed makes it a string so need to convert it back to a number using Number()
-    this.handicapIndex = Number(
-      (
-        (totalScoreDifferential / this.roundScoreDifferentialArray.length) *
-        0.96
-      ).toFixed(1)
-    );
+    this.handicapIndex = Math.round(average * 0.96 * 10) / 10;
   }
 
   addRound() {
