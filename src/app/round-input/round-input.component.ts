@@ -257,8 +257,8 @@ export class RoundInputComponent implements OnInit {
   }
 
   calculateHandicapBtnClick() {
-    console.log('total rounds played: ', this.totalRoundsPlayed);
-    console.log('Score Differential Array: ', this.roundScoreDifferentialArray);
+    // console.log('total rounds played: ', this.totalRoundsPlayed);
+    // console.log('Score Differential Array: ', this.roundScoreDifferentialArray);
     console.log(
       '18 hole differentials: ',
       this.eighteenHoleDifferentialArray.filter((value) => value !== undefined)
@@ -279,6 +279,11 @@ export class RoundInputComponent implements OnInit {
 
     let finalDifferentialArray = this.eighteenHoleDifferentialArray.concat(
       this.nineHoleTotalDifferentialArray
+
+    console.log(
+      'Final Differential Array: ',
+      finalDifferentialArray.filter((value) => value !== undefined)
+    );
 
     let totalScoreDifferential = 0;
 
