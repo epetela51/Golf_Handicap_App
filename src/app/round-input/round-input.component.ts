@@ -185,7 +185,10 @@ export class RoundInputComponent implements OnInit {
         ) / 10;
 
       if (roundSelected === 9) {
-        this.calculate9HoleDifferential(formGroupIndex, roundDifferential);
+        this.calculateCombined9HoleDifferentials(
+          formGroupIndex,
+          roundDifferential
+        );
       } else {
         this.eighteenHoleDifferentialArray[formGroupIndex] = roundDifferential;
       }
@@ -203,7 +206,7 @@ export class RoundInputComponent implements OnInit {
    * @param formGroupIndex - index of the formGroup in the formArray.  Used when updated existing 9 hole differential to override the value in the array at the correct position
    * @param nineHoleDifferential - the individual 9 hole differential to be added to the array
    */
-  calculate9HoleDifferential(
+  calculateCombined9HoleDifferentials(
     formGroupIndex: number,
     nineHoleDifferential: number
   ) {
@@ -220,7 +223,7 @@ export class RoundInputComponent implements OnInit {
     );
 
     // Iterate through the filtered array in pairs of two
-    if (filteredDiffArray.length > 1 && filteredDiffArray.length % 2 === 0) {
+    if (filteredDiffArray.length > 1) {
       for (let i = 0; i < filteredDiffArray.length; i += 2) {
         if (filteredDiffArray[i + 1] !== undefined) {
           // Sum the current pair of 9-hole differentials
@@ -274,10 +277,13 @@ export class RoundInputComponent implements OnInit {
 
     // the below will need to be adjusted as the handicap index is just taking the total number of rounds (regardless of if it's a 'true' round) and SHOULD be going off the total of the 'true' number of rounds
 
+    let finalDifferentialArray = this.eighteenHoleDifferentialArray.concat(
+      this.nineHoleTotalDifferentialArray
+
     let totalScoreDifferential = 0;
 
     // utilize a new array which has the 18 hole differential and any combined 9 hole differential ???
-    this.roundScoreDifferentialArray.forEach((roundScoreDifferential) => {
+    finalDifferentialArray.forEach((roundScoreDifferential) => {
       totalScoreDifferential += roundScoreDifferential;
     });
     // toFixed makes it a string so need to convert it back to a number using Number()
@@ -302,7 +308,7 @@ export class RoundInputComponent implements OnInit {
     }
   }
 
-  // look into logic for removing a 9 hole round in terms of the 9 hole round differential!
+  // look into logic for removing a 9 or 18 hole round from the appropriate array
   removeRound() {
     if (this.roundInputsArray.length > 3) {
       this.roundInputsArray.removeAt(-1);
