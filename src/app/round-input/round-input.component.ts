@@ -213,8 +213,8 @@ export class RoundInputComponent implements OnInit {
     this.nineHoleDifferentialArray[formGroupIndex] = nineHoleDifferential;
 
     /**
-     * filteredDiffArray used to remove any empty values from nineHoleDifferentialArray so we can
-     * get the true number of 9 holes played in order to do calculation for final total 18 hole differentials
+     * filteredDiffArray used to remove any empty values so we can get the true number of
+     * 9 holes played in order to do calculation for final total 18 hole differentials
      * By inserting a differential in the array positionally there is the potential of being 'empty' values in the array
      * this filteredDiffArray uses a filter to remove those empty values so we have a true array of numbers
      */
@@ -331,14 +331,21 @@ export class RoundInputComponent implements OnInit {
     }
   }
 
-  // look into logic for removing a 9 or 18 hole round from the appropriate array
   removeRound() {
+    const lastSelectedRound =
+      this.roundInputsArray.value[this.roundInputsArrayIndex - 1]
+        .roundSelectionGroup.roundSelection;
+
     if (this.roundInputsArray.length > 3) {
       this.roundInputsArray.removeAt(-1);
       this.roundScoreDifferentialArray.pop();
+      if (lastSelectedRound === 9) {
+        this.nineHoleDifferentialArray.pop();
+      } else this.eighteenHoleDifferentialArray.pop();
     } else {
-      alert('Minimum of 3 rounds are required');
+      return alert('Minimum of 3 rounds are required');
     }
+
     this.calcBtnEnabled = false;
     const lastRoundInArray =
       this.totalHolesPlayedArray[this.totalHolesPlayedArray.length - 1];
