@@ -1,112 +1,171 @@
 <div>
-    <form [formGroup]="roundForm">
-        <div formArrayName="roundInputsArray"
-            *ngFor="let round of roundInputsArray.controls; let roundCount=index">
-            <div [formGroupName]="roundCount">
-
-                <!-- Round number -->
-                <div class="form-group">
-                    <label attr.for="{{'round_number' + roundCount}}">Round Number: </label>
-                    <span id="{{'round_number' + roundCount}}"> {{roundCount+1}}</span>
-                </div>
-
-                <!-- 9 or 18 hole selection -->
-                <ng-container formGroupName="roundSelectionGroup">
-                    <div class="form-group">
-                        <label>Round Selection: </label>
-                        <div>
-                            <label attr.for="{{'nineHoles' + roundCount}}">
-                                <input type="radio"
-                                id="{{'nineHoles' + roundCount}}"
-                                [value]=9
-                                formControlName="roundSelection">
-                                9 Holes
-                            </label>
-                        </div>
-                        <div>
-                            <label attr.for="{{'eighteenHoles' + roundCount}}">
-                                <input type="radio"
-                                id="{{'eighteenHoles' + roundCount}}"
-                                [value]=18 
-                                formControlName="roundSelection">
-                                18 Holes
-                            </label>
-                        </div>
-                    </div>
-                </ng-container>
-
-                <!-- round score input -->
-                <div class="form-group">
-                    <label attr.for="{{'userRoundScore' + roundCount}}">Round Score: </label>
-                    <input id="{{'userRoundScore' + roundCount}}" type="number" formControlName="userRoundScore" [min]="getMinScore(round.get('roundSelectionGroup')?.get('roundSelection')?.value)">
-                    <br>
-                    <span *ngIf="round.get('userRoundScore')?.errors?.['invalidForm']" style="font-weight: bold; color: red;">Enter in a round of at least {{round.get('roundSelectionGroup')?.get('roundSelection')?.value === 18 ? '18' : '9'}}</span>
-                </div>
-
-                <!-- course rating input -->
-                <div class="form-group">
-                    <label attr.for="{{'courseRating' + roundCount}}">Course Rating: </label>
-                    <input id="{{'courseRating' + roundCount}}" type="number" formControlName="courseRating">
-                </div>
-
-                <!-- slope rating input -->
-                <div class="form-group">
-                    <label attr.for="{{'slopeRating' + roundCount}}">Slope Rating: </label>
-                    <input id="{{'slopeRating' + roundCount}}" type="number" formControlName="slopeRating">
-                </div>
-
-                <!-- Round Sum -->
-                <div>
-                    Score Differential: 
-                    <span *ngFor="let total of roundTotal; let sumCount = index">
-                        <!-- used to prevent multiple sums showing for a single round -->
-                        <span *ngIf="roundCount === sumCount">
-                            {{total}}
-                        </span>
-                    </span>
-                </div>
-
-            </div>
-
-            <br>
-            
+  <form [formGroup]="roundForm">
+    <div
+      formArrayName="roundInputsArray"
+      *ngFor="let round of roundInputsArray.controls; let roundCount = index"
+    >
+      <div [formGroupName]="roundCount">
+        <!-- Round number -->
+        <div class="form-group">
+          <label attr.for="{{ 'round_number' + roundCount }}"
+            >Round Number:
+          </label>
+          <span id="{{ 'round_number' + roundCount }}">
+            {{ roundCount + 1 }}</span
+          >
         </div>
 
-        Total Holes Played: {{totalHolesPlayed}}
-        <br>
-        <br>
+        <!-- 9 or 18 hole selection -->
+        <ng-container formGroupName="roundSelectionGroup">
+          <div class="form-group">
+            <label>Round Selection: </label>
+            <div>
+              <label attr.for="{{ 'nineHoles' + roundCount }}">
+                <input
+                  type="radio"
+                  id="{{ 'nineHoles' + roundCount }}"
+                  [value]="9"
+                  formControlName="roundSelection"
+                />
+                9 Holes
+              </label>
+            </div>
+            <div>
+              <label attr.for="{{ 'eighteenHoles' + roundCount }}">
+                <input
+                  type="radio"
+                  id="{{ 'eighteenHoles' + roundCount }}"
+                  [value]="18"
+                  formControlName="roundSelection"
+                />
+                18 Holes
+              </label>
+            </div>
+          </div>
+        </ng-container>
 
-        <button (click)='removeRound()'>Remove Last Round</button>
+        <!-- round score input -->
+        <div class="form-group">
+          <label attr.for="{{ 'userRoundScore' + roundCount }}"
+            >Round Score:
+          </label>
+          <input
+            id="{{ 'userRoundScore' + roundCount }}"
+            type="number"
+            formControlName="userRoundScore"
+          />
+          <br />
+          <span
+            *ngIf="round.get('userRoundScore')?.errors?.['invalidForm']"
+            style="font-weight: bold; color: red"
+            >Enter in a round of at least
+            {{
+              round.get("roundSelectionGroup")?.get("roundSelection")?.value ===
+              18
+                ? "18"
+                : "9"
+            }}</span
+          >
+        </div>
 
-        <br>
-        <br>
-        <button (click)='resetAllRounds()'>Reset Form</button>
+        <!-- course rating input -->
+        <div class="form-group">
+          <label attr.for="{{ 'courseRating' + roundCount }}"
+            >Course Rating:
+          </label>
+          <input
+            id="{{ 'courseRating' + roundCount }}"
+            type="number"
+            formControlName="courseRating"
+          />
+        </div>
 
-        <br>
-        <br>
-        <!-- can ONLY add another round if the form is valid
-        this prevents users from constantly adding empty rounds and surpassing the max allowed rounds/holes played
-        this needs to be added back after I am done testing the max rounds piece
-        this also prevents users from adding more rounds once the max holes allowed limit is reached --->
-        <button (click)='addRound()'[disabled]="!roundForm.valid || totalHolesPlayed >= maxHolesAllowed">
-            Add Round
-        </button>
+        <!-- slope rating input -->
+        <div class="form-group">
+          <label attr.for="{{ 'slopeRating' + roundCount }}"
+            >Slope Rating:
+          </label>
+          <input
+            id="{{ 'slopeRating' + roundCount }}"
+            type="number"
+            formControlName="slopeRating"
+          />
+        </div>
 
-        <br>
-        <br>
+        <!-- Round Sum -->
+        <div>
+          Score Differential:
+          <span
+            *ngFor="
+              let total of roundScoreDifferentialArray;
+              let sumCount = index
+            "
+          >
+            <!-- used to prevent multiple sums showing for a single round -->
+            <span *ngIf="roundCount === sumCount">
+              {{ total }}
+            </span>
+          </span>
+        </div>
+      </div>
 
-        <button (click)='calculateHandicapBtnClick()'
-            [disabled]="(calcBtnEnabled || !roundForm.valid) || totalHolesPlayed < 54" >
-            Calculate Handicap
-        </button>
-
-    </form>
-
-    <br>
-    
-    <div>
-        <p *ngIf="!calcBtnEnabled && handicapIndex !== 0">{{recalcHandicapMsg}}</p>
-        <p>Your Handicap Index: <span>{{handicapIndex}}</span> </p>
+      <br />
     </div>
 
+    Total Holes Played: {{ totalHolesPlayed }}
+    <br />
+    Total TRUE rounds played: {{ totalRoundsPlayed }}
+    <br />
+    Holes Left until Max:
+    {{
+      maxHolesAllowed - totalHolesPlayed == -9
+        ? "Max Holes Exceeded"
+        : maxHolesAllowed - totalHolesPlayed
+    }}
+    <br />
+    <!-- style the below with a different color or make it obviously.  Maybe user a modal or popup when using bootstrap? -->
+    <p *ngIf="maxHolesExceeded">
+      You can NOT enter an 18 hole score as it will put you over the max number
+      of holes which is {{ maxHolesAllowed }} holes
+    </p>
+    <br />
+    <button (click)="removeRound()">Remove Last Round</button>
+
+    <br />
+    <br />
+    <button (click)="resetAllRounds()">Reset Form</button>
+
+    <br />
+    <br />
+    <!-- can ONLY add another round if the form is valid
+        this prevents users from constantly adding empty rounds and surpassing the max allowed rounds/holes played
+        this also prevents users from adding more rounds once the max holes allowed limit is reached --->
+    <button
+      (click)="addRound()"
+      [disabled]="!roundForm.valid || totalHolesPlayed >= maxHolesAllowed"
+    >
+      Add Round
+    </button>
+
+    <br />
+    <br />
+
+    <button
+      (click)="calculateHandicapBtnClick()"
+      [disabled]="calcBtnEnabled || !roundForm.valid || totalHolesPlayed < 54"
+    >
+      Calculate Handicap
+    </button>
+  </form>
+
+  <br />
+
+  <div>
+    <p *ngIf="!calcBtnEnabled && handicapIndex !== 0">
+      {{ recalcHandicapMsg }}
+    </p>
+    <p>
+      Your Handicap Index: <span>{{ handicapIndex }}</span>
+    </p>
+  </div>
 </div>
