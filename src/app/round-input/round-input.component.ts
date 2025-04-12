@@ -79,6 +79,7 @@ export class RoundInputComponent implements OnInit {
           this.maxHolesExceeded = false;
         }
         this.checkIfMaxTotalRoundsAreMet(roundSelectionValue, formGroupIndex);
+        this.handleRoundSelectionChange(roundSelectionValue, formGroupIndex);
       }
     );
 
@@ -112,11 +113,7 @@ export class RoundInputComponent implements OnInit {
         userRoundScoreFormControl?.setValue(null, { emitEvent: false });
         userRoundScoreFormControl?.disable();
         // alert(`Your total holes played is ${this.totalHolesPlayed} so you can only enter a 9 hole round`)
-      } else {
-        this.handleRoundSelectionChange(roundSelected, formGroupIndex);
       }
-    } else {
-      this.handleRoundSelectionChange(roundSelected, formGroupIndex);
     }
 
     // set the round selected value from radio button into the array at the specific position
@@ -135,6 +132,19 @@ export class RoundInputComponent implements OnInit {
   handleRoundSelectionChange(roundSelected: number, formGroupIndex: number) {
     const userRoundScoreFormControl =
       this.roundInputsArray.controls[formGroupIndex].get('userRoundScore');
+    const userRoundSelectionFormControl = this.roundInputsArray.controls[
+      formGroupIndex
+    ]
+      .get('roundSelectionGroup')
+      ?.get('roundSelection');
+
+    // Store the previous value of the radio button selection
+    const previousValue = userRoundSelectionFormControl?.value;
+
+    // Check if the value has changed, if it has, reset the userRoundScore control so it's not 'touched' or 'dirty'
+    if (previousValue === roundSelected) {
+      userRoundScoreFormControl?.reset(null, { emitEvent: false });
+    }
 
     // on radio btn change, clear out the value for user round score
     userRoundScoreFormControl?.setValue(null, { emitEvent: false }); // emitEvent: false ==> to prevent formGroup observable from firing
