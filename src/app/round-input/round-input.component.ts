@@ -231,8 +231,8 @@ export class RoundInputComponent implements OnInit {
             Math.round(
               (filteredDiffArray[i] + filteredDiffArray[i + 1]) * 100
             ) / 100;
-
-          this.nineHoleTotalDifferentialArray[i] = summedDifferential;
+          const combinedDifferential = summedDifferential / 2;
+          this.nineHoleTotalDifferentialArray[i] = combinedDifferential;
         }
       }
     }
@@ -315,7 +315,12 @@ export class RoundInputComponent implements OnInit {
 
     let average = summedUpDifferentials / combinedDifferentialArray.length;
 
-    this.handicapIndex = Math.round(average * 0.96 * 10) / 10;
+    // Apply the 0.96 multiplier only if there are 7 or more ROUNDS
+    if (this.totalRoundsPlayed >= 7) {
+      this.handicapIndex = Math.round(average * 0.96 * 10) / 10;
+    } else {
+      this.handicapIndex = Math.round(average * 10) / 10;
+    }
   }
 
   addRound() {
