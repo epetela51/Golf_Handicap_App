@@ -1,0 +1,69 @@
+import { AbstractControl, ValidatorFn } from '@angular/forms';
+
+/**
+ * Determines the total number of true 18-hole rounds played.
+ * @param totalHolesPlayedArray - Array of holes played per round.
+ * @returns Total number of 18-hole rounds.
+ */
+export function determineTrue18HoleRounds(
+  totalHolesPlayedArray: number[]
+): number {
+  let countOf18 = 0;
+  let countPairsOf9 = 0;
+
+  countOf18 = totalHolesPlayedArray.filter((num) => num === 18).length;
+
+  totalHolesPlayedArray.forEach((number) => {
+    if (number === 9) {
+      countPairsOf9++;
+    }
+  });
+
+  // only count it if there is a pair of 9s.  i.e. 2 rounds of 9 counts as 1 | 3 rounds of 9 counts as 1 | 4 rounds of 9 count as 2
+  countPairsOf9 = Math.floor(countPairsOf9 / 2);
+  let totalTrueRounds = countOf18 + countPairsOf9;
+  return totalTrueRounds;
+}
+
+/**
+ * Creates a custom validator for round input validation.
+ * @param score - Minimum score required.
+ * @returns Validator function.
+ */
+export function roundInputValidation(score: number): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: boolean } | null => {
+    if ((control.touched || control.dirty) && control.value < score) {
+      return { invalidForm: true };
+    }
+    return null;
+  };
+}
+
+/**
+ * Calculates the combined 9-hole differentials into 18-hole equivalents.
+ * @param nineHoleDifferentialArray - Array of 9-hole differentials.
+ * @returns An array of combined 18-hole differentials.
+ */
+export function calculateCombinedDifferentials(
+  nineHoleDifferentialArray: number[]
+): number[] {
+  const filteredDiffArray = nineHoleDifferentialArray.filter(
+    (value) => value !== undefined
+  );
+
+  const combined9HoleDifferentials: number[] = [];
+
+  // Iterate through the filtered array in pairs of two
+  for (let i = 0; i < filteredDiffArray.length; i += 2) {
+    if (filteredDiffArray[i + 1] !== undefined) {
+      // Sum the current pair of 9-hole differentials
+      const summedDifferential =
+        Math.round((filteredDiffArray[i] + filteredDiffArray[i + 1]) * 100) /
+        100;
+      const combinedDifferential = summedDifferential / 2;
+      combined9HoleDifferentials.push(combinedDifferential);
+    }
+  }
+
+  return combined9HoleDifferentials;
+}

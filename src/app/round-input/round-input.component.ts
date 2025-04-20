@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+
 import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  AbstractControl,
-  FormArray,
-  ValidatorFn,
-} from '@angular/forms';
+  determineTrue18HoleRounds,
+  roundInputValidation,
+  calculateCombinedDifferentials,
+} from './utils/round-utils';
 // import { Round } from '../data/user-handicap-modal';
 
 @Component({
@@ -125,7 +124,9 @@ export class RoundInputComponent implements OnInit {
       this.totalHolesPlayed += round;
     });
     // call below function to determine how many true 'rounds' of golf were played (i.e. how many rounds of 18 holes total)
-    this.totalRoundsPlayed = this.determineTrue18HoleRounds();
+    this.totalRoundsPlayed = determineTrue18HoleRounds(
+      this.totalHolesPlayedArray
+    );
   }
 
   // used to dynamically set validation for user round input based on radio button selection
@@ -157,21 +158,12 @@ export class RoundInputComponent implements OnInit {
     userRoundScoreFormControl?.setValidators([
       Validators.required,
       Validators.min(roundSelected),
-      this.roundInputValidation(roundSelected),
+      roundInputValidation(roundSelected),
     ]);
 
     // onlySelf is an optional parameter which only runs updateValueAndValidity for this specific control
     // since we are only setting validators for userRoundScore we only need to update validation runs for this control
     userRoundScoreFormControl?.updateValueAndValidity({ onlySelf: true });
-  }
-
-  roundInputValidation(score: number): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: boolean } | null => {
-      if ((control.touched || control.dirty) && control.value < score) {
-        return { invalidForm: true };
-      }
-      return null;
-    };
   }
 
   calcScoreDifferential(formGroupIndex: number) {
@@ -222,48 +214,10 @@ export class RoundInputComponent implements OnInit {
   ) {
     this.nineHoleDifferentialArray[formGroupIndex] = nineHoleDifferential;
 
-    /**
-     * filteredDiffArray used to remove any empty values so we can get the true number of
-     * 9 holes played in order to do calculation for final total 18 hole differentials
-     * By inserting a differential in the array positionally there is the potential of being 'empty' values in the array
-     * this filteredDiffArray uses a filter to remove those empty values so we have a true array of numbers
-     */
-    const filteredDiffArray = this.nineHoleDifferentialArray.filter(
-      (value) => value !== undefined
+    // Use the helper function to calculate combined differentials
+    this.nineHoleTotalDifferentialArray = calculateCombinedDifferentials(
+      this.nineHoleDifferentialArray
     );
-
-    // Iterate through the filtered array in pairs of two
-    if (filteredDiffArray.length > 1) {
-      for (let i = 0; i < filteredDiffArray.length; i += 2) {
-        if (filteredDiffArray[i + 1] !== undefined) {
-          // Sum the current pair of 9-hole differentials
-          const summedDifferential =
-            Math.round(
-              (filteredDiffArray[i] + filteredDiffArray[i + 1]) * 100
-            ) / 100;
-          const combinedDifferential = summedDifferential / 2;
-          this.nineHoleTotalDifferentialArray[i] = combinedDifferential;
-        }
-      }
-    }
-  }
-
-  determineTrue18HoleRounds() {
-    let countOf18 = 0;
-    let countPairsOf9 = 0;
-
-    countOf18 = this.totalHolesPlayedArray.filter((num) => num === 18).length;
-
-    this.totalHolesPlayedArray.forEach((number) => {
-      if (number === 9) {
-        countPairsOf9++;
-      }
-    });
-
-    // only count it if there is a pair of 9s.  i.e. 2 rounds of 9 counts as 1 | 3 rounds of 9 counts as 1 | 4 rounds of 9 count as 2
-    countPairsOf9 = Math.floor(countPairsOf9 / 2);
-    let totalTrueRounds = countOf18 + countPairsOf9;
-    return totalTrueRounds;
   }
 
   calculateHandicapBtnClick() {
