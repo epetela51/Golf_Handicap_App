@@ -5,6 +5,7 @@ import {
   determineTrue18HoleRounds,
   roundInputValidation,
   calculateCombinedDifferentials,
+  calculateRoundDifferential,
 } from './utils/round-utils';
 // import { Round } from '../data/user-handicap-modal';
 
@@ -170,8 +171,6 @@ export class RoundInputComponent implements OnInit {
     let controlSelected = this.roundInputsArray.controls[formGroupIndex];
 
     let roundScoreInputValue = controlSelected.get('userRoundScore')?.value;
-    let courseRatingValue = controlSelected.get('courseRating')?.value;
-    let slopeRatingValue = controlSelected.get('slopeRating')?.value;
     let roundSelected = controlSelected
       .get('roundSelectionGroup')
       ?.get('roundSelection')?.value;
@@ -179,12 +178,10 @@ export class RoundInputComponent implements OnInit {
     let roundDifferential;
 
     if (controlSelected.status === 'VALID' && roundScoreInputValue !== null) {
-      roundDifferential =
-        Math.round(
-          (113 / slopeRatingValue) *
-            (roundScoreInputValue - courseRatingValue) *
-            10
-        ) / 10;
+      roundDifferential = calculateRoundDifferential(
+        this.roundInputsArray,
+        formGroupIndex
+      );
 
       if (roundSelected === 9) {
         this.calculateCombined9HoleDifferentials(

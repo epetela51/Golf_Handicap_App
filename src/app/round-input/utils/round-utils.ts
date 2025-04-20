@@ -1,4 +1,4 @@
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormArray, ValidatorFn } from '@angular/forms';
 
 /**
  * Determines the total number of true 18-hole rounds played.
@@ -66,4 +66,35 @@ export function calculateCombinedDifferentials(
   }
 
   return combined9HoleDifferentials;
+}
+
+/**
+ * Calculates the round differential for a given round of golf.
+ *
+ * The round differential is calculated using the formula:
+ *
+ * `(113 / slopeRating) * (roundScore - courseRating)`
+ *
+ * The result is rounded to one decimal place.
+ *
+ * @param roundInputsArray - The FormArray containing the round input form groups.
+ * @param formGroupIndex - The index of the form group in the FormArray for which the differential is being calculated.
+ * @returns The calculated round differential as a number.
+ */
+export function calculateRoundDifferential(
+  roundInputsArray: FormArray,
+  formGroupIndex: number
+): number {
+  const controlSelected = roundInputsArray.controls[formGroupIndex];
+
+  const roundScoreInputValue = controlSelected.get('userRoundScore')?.value;
+  const courseRatingValue = controlSelected.get('courseRating')?.value;
+  const slopeRatingValue = controlSelected.get('slopeRating')?.value;
+
+  const roundDifferential =
+    Math.round(
+      (113 / slopeRatingValue) * (roundScoreInputValue - courseRatingValue) * 10
+    ) / 10;
+
+  return roundDifferential;
 }
