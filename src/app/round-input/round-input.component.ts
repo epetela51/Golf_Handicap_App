@@ -6,6 +6,7 @@ import {
   roundInputValidation,
   calculateCombinedDifferentials,
   calculateRoundDifferential,
+  calculateHandicap,
 } from './utils/round-utils';
 // import { Round } from '../data/user-handicap-modal';
 
@@ -220,67 +221,16 @@ export class RoundInputComponent implements OnInit {
   calculateHandicapBtnClick() {
     this.calcBtnEnabled = true;
 
-    // combined the 9 and 18 hole differentials into one array and have it be sorted so the lowest values are first
-    let combinedDifferentialArray = this.eighteenHoleDifferentialArray
-      .filter((value) => value !== undefined)
-      .concat(
-        this.nineHoleTotalDifferentialArray.filter(
-          (value) => value !== undefined
-        )
-      )
-      .sort((a, b) => a - b);
-
-    // based on the number of differentials, grab the lowest values
-    switch (combinedDifferentialArray.length) {
-      case 3:
-      case 4:
-      case 5:
-        combinedDifferentialArray = combinedDifferentialArray.slice(0, 1);
-        break;
-      case 6:
-      case 7:
-      case 8:
-        combinedDifferentialArray = combinedDifferentialArray.slice(0, 2);
-        break;
-      case 9:
-      case 10:
-      case 11:
-        combinedDifferentialArray = combinedDifferentialArray.slice(0, 3);
-        break;
-      case 12:
-      case 13:
-      case 14:
-        combinedDifferentialArray = combinedDifferentialArray.slice(0, 4);
-        break;
-      case 15:
-      case 16:
-        combinedDifferentialArray = combinedDifferentialArray.slice(0, 5);
-        break;
-      case 17:
-      case 18:
-        combinedDifferentialArray = combinedDifferentialArray.slice(0, 6);
-        break;
-      case 19:
-        combinedDifferentialArray = combinedDifferentialArray.slice(0, 7);
-        break;
-      case 20:
-        combinedDifferentialArray = combinedDifferentialArray.slice(0, 8);
-        break;
-      // no default
-    }
-
-    let summedUpDifferentials = combinedDifferentialArray.reduce(
-      (total, currentValue) => total + currentValue,
-      0
+    let handicapAverage = calculateHandicap(
+      this.nineHoleTotalDifferentialArray,
+      this.eighteenHoleDifferentialArray
     );
-
-    let average = summedUpDifferentials / combinedDifferentialArray.length;
 
     // Apply the 0.96 multiplier only if there are 7 or more ROUNDS
     if (this.totalRoundsPlayed >= 7) {
-      this.handicapIndex = Math.round(average * 0.96 * 10) / 10;
+      this.handicapIndex = Math.round(handicapAverage * 0.96 * 10) / 10;
     } else {
-      this.handicapIndex = Math.round(average * 10) / 10;
+      this.handicapIndex = Math.round(handicapAverage * 10) / 10;
     }
   }
 
