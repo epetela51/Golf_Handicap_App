@@ -1,13 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormArray, AbstractControl } from '@angular/forms';
+import { FormGroup, FormArray } from '@angular/forms';
 import { RoundFormService } from '../services/round-form.service';
 import { HandicapCalculationService } from '../services/handicap-calculation.service';
 import { RoundValidationService } from '../services/round-validation.service';
-import {
-  RoundFormGroup,
-  RoundDifferential,
-  RoundValidationResult,
-} from '../models/round.interface';
+import { RoundValidationResult } from '../models/round.interface';
 
 @Component({
   selector: 'app-round-input',

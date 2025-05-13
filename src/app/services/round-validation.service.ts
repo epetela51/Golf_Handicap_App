@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormGroup, AbstractControl } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { determineTrue18HoleRounds } from '../round-input/utils/round-utils';
-import { RoundForm } from '../models/round.interface';
 
 @Injectable({
   providedIn: 'root',
