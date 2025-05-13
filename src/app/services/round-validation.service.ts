@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { determineTrue18HoleRounds } from '../round-input/utils/round-utils';
+import { HandicapCalculationService } from './handicap-calculation.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoundValidationService {
+  constructor(private handicapCalculationService: HandicapCalculationService) {}
+
   checkIfMaxTotalRoundsAreMet(
     roundSelected: number,
     formGroupIndex: number,
@@ -38,9 +40,10 @@ export class RoundValidationService {
       (sum, round) => sum + (round || 0),
       0
     );
-    const totalRoundsPlayed = determineTrue18HoleRounds(
-      updatedTotalHolesPlayedArray
-    );
+    const totalRoundsPlayed =
+      this.handicapCalculationService.determineTrue18HoleRounds(
+        updatedTotalHolesPlayedArray
+      );
 
     return {
       maxHolesExceeded,
@@ -59,5 +62,11 @@ export class RoundValidationService {
     maxHolesAllowed: number
   ): boolean {
     return totalHolesPlayed < maxHolesAllowed;
+  }
+
+  validateRounds(totalHolesPlayedArray: number[]): number {
+    return this.handicapCalculationService.determineTrue18HoleRounds(
+      totalHolesPlayedArray
+    );
   }
 }

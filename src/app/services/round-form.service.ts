@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
-import { roundInputValidation } from '../round-input/utils/round-utils';
+import { roundInputValidation } from '../round-input/utils/form-validators';
 
 @Injectable({
   providedIn: 'root',
