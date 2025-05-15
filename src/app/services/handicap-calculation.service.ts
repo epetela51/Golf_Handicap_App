@@ -194,6 +194,41 @@ export class HandicapCalculationService {
     return this.calculateCombinedDifferentials(nineHoleDifferentialArray);
   }
 
+  /**
+   * Returns the adjustment value based on the number of differentials, according to the chart.
+   * @param numDifferentials - The number of differentials in the scoring record.
+   * @returns The adjustment value.
+   */
+  getHandicapAdjustment(numDifferentials: number): number {
+    switch (numDifferentials) {
+      case 3:
+        return -2.0;
+      case 4:
+        return -1.0;
+      case 5:
+        return 0;
+      case 6:
+        return -1.0;
+      case 7:
+      case 8:
+      case 9:
+      case 10:
+      case 11:
+      case 12:
+      case 13:
+      case 14:
+      case 15:
+      case 16:
+      case 17:
+      case 18:
+      case 19:
+      case 20:
+        return 0;
+      default:
+        return 0;
+    }
+  }
+
   calculateFinalHandicap(
     nineHoleTotalDifferentialArray: number[],
     eighteenHoleDifferentialArray: number[],
@@ -204,9 +239,10 @@ export class HandicapCalculationService {
       eighteenHoleDifferentialArray
     );
 
-    if (totalRoundsPlayed >= 7) {
-      return Math.round(handicapAverage * 0.96 * 10) / 10;
-    }
-    return Math.round(handicapAverage * 10) / 10;
+    // Use totalRoundsPlayed as the number of differentials for adjustment
+    const adjustment = this.getHandicapAdjustment(totalRoundsPlayed);
+
+    // Remove the 0.96 multiplier and just use the adjustment
+    return Math.round((handicapAverage + adjustment) * 10) / 10;
   }
 }
