@@ -198,6 +198,12 @@ export class RoundInputComponent implements OnInit {
       this.totalHolesPlayed -= lastRoundInArray;
       this.totalHolesPlayedArray.pop();
       this.roundInputsArrayIndex--;
+
+      // Recalculate total rounds played after removing a round
+      this.totalRoundsPlayed =
+        this.handicapCalculationService.determineTrue18HoleRounds(
+          this.totalHolesPlayedArray
+        );
     } else {
       alert('Minimum of 3 rounds are required');
     }
