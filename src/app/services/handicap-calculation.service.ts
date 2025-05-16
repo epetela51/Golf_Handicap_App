@@ -78,21 +78,21 @@ export class HandicapCalculationService {
     const filteredDiffArray = nineHoleDifferentialArray.filter(
       (value) => value !== undefined
     );
-
     const combined9HoleDifferentials: number[] = [];
 
     // Iterate through the filtered array in pairs of two
-    for (let i = 0; i < filteredDiffArray.length; i += 2) {
-      if (filteredDiffArray[i + 1] !== undefined) {
-        // Sum the current pair of 9-hole differentials
-        const summedDifferential =
-          Math.round((filteredDiffArray[i] + filteredDiffArray[i + 1]) * 100) /
-          100;
-        const combinedDifferential = summedDifferential / 2;
-        combined9HoleDifferentials.push(combinedDifferential);
+    if (filteredDiffArray.length > 1) {
+      for (let i = 0; i < filteredDiffArray.length; i += 2) {
+        if (filteredDiffArray[i + 1] !== undefined) {
+          // Sum the current pair of 9-hole differentials
+          const summedDifferential =
+            Math.round(
+              (filteredDiffArray[i] + filteredDiffArray[i + 1]) * 100
+            ) / 100;
+          combined9HoleDifferentials.push(summedDifferential);
+        }
       }
     }
-
     return combined9HoleDifferentials;
   }
 
@@ -108,9 +108,11 @@ export class HandicapCalculationService {
   ): number {
     // combined the 9 and 18 hole differentials into one array and have it be sorted so the lowest values are first
     let combinedDifferentialArray = eighteenHoleDifferentialArray
-      .filter((value) => value !== undefined)
+      .filter((value) => value !== undefined && value !== 0)
       .concat(
-        nineHoleTotalDifferentialArray.filter((value) => value !== undefined)
+        nineHoleTotalDifferentialArray.filter(
+          (value) => value !== undefined && value !== 0
+        )
       )
       .sort((a, b) => a - b);
 
@@ -160,6 +162,7 @@ export class HandicapCalculationService {
 
     let handicapAverage =
       summedUpDifferentials / combinedDifferentialArray.length;
+
     return handicapAverage;
   }
 
@@ -195,12 +198,12 @@ export class HandicapCalculationService {
   }
 
   /**
-   * Returns the adjustment value based on the number of differentials, according to the chart.
-   * @param numDifferentials - The number of differentials in the scoring record.
+   * Returns the adjustment value based on the number of total rounds played (18-hole rounds), according to the chart.
+   * @param totalRounds - The number of differentials in the scoring record.
    * @returns The adjustment value.
    */
-  getHandicapAdjustment(numDifferentials: number): number {
-    switch (numDifferentials) {
+  getHandicapAdjustment(totalRounds: number): number {
+    switch (totalRounds) {
       case 3:
         return -2.0;
       case 4:
@@ -235,8 +238,8 @@ export class HandicapCalculationService {
     totalRoundsPlayed: number
   ): number {
     const handicapAverage = this.calculateHandicap(
-      nineHoleTotalDifferentialArray,
-      eighteenHoleDifferentialArray
+      eighteenHoleDifferentialArray,
+      nineHoleTotalDifferentialArray
     );
 
     // Use totalRoundsPlayed as the number of differentials for adjustment
