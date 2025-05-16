@@ -7,6 +7,10 @@ import {
 } from '@angular/forms';
 import { RoundDifferential } from '../models/round.interface';
 
+/**
+ * Service responsible for calculating golf handicaps according to the World Handicap System (WHS).
+ * Handles both 9-hole and 18-hole round calculations, differential computations, and final handicap index determination.
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -166,6 +170,13 @@ export class HandicapCalculationService {
     return handicapAverage;
   }
 
+  /**
+   * Calculates the score differential for a given round.
+   * @param roundInputsArray - FormArray containing the round input data
+   * @param formGroupIndex - Index of the form group in the array
+   * @param roundSelected - Number of holes played (9 or 18)
+   * @returns Object containing the round differential and whether it's a 9-hole round
+   */
   calculateScoreDifferential(
     roundInputsArray: FormArray,
     formGroupIndex: number,
@@ -188,6 +199,13 @@ export class HandicapCalculationService {
     return { roundDifferential: 0, isNineHole: false };
   }
 
+  /**
+   * Calculates combined 9-hole differentials into 18-hole equivalents.
+   * @param formGroupIndex - Index of the current form group
+   * @param nineHoleDifferential - Differential for the current 9-hole round
+   * @param nineHoleDifferentialArray - Array of all 9-hole differentials
+   * @returns Array of combined 18-hole differentials
+   */
   calculateCombined9HoleDifferentials(
     formGroupIndex: number,
     nineHoleDifferential: number,
@@ -232,6 +250,13 @@ export class HandicapCalculationService {
     }
   }
 
+  /**
+   * Calculates the final handicap index based on the provided differentials and total rounds played.
+   * @param nineHoleTotalDifferentialArray - Array of 9-hole differentials
+   * @param eighteenHoleDifferentialArray - Array of 18-hole differentials
+   * @param totalRoundsPlayed - Total number of rounds played
+   * @returns The final handicap index rounded to one decimal place
+   */
   calculateFinalHandicap(
     nineHoleTotalDifferentialArray: number[],
     eighteenHoleDifferentialArray: number[],

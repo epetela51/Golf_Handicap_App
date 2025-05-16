@@ -5,6 +5,10 @@ import { HandicapCalculationService } from '../services/handicap-calculation.ser
 import { RoundValidationService } from '../services/round-validation.service';
 import { RoundValidationResult } from '../models/round.interface';
 
+/**
+ * Component responsible for handling round input and handicap calculation.
+ * Manages the form for entering golf rounds and calculates the handicap index.
+ */
 @Component({
   selector: 'app-round-input',
   templateUrl: './round-input.component.html',
@@ -112,6 +116,11 @@ export class RoundInputComponent implements OnInit {
     this.totalHolesPlayedArray = validationResult.totalHolesPlayedArray;
   }
 
+  /**
+   * Calculates the score differential for a specific round.
+   * Updates the differential arrays based on whether it's a 9 or 18 hole round.
+   * @param formGroupIndex - Index of the form group being calculated
+   */
   calcScoreDifferential(formGroupIndex: number): void {
     const controlSelected = this.roundInputsArray.controls[formGroupIndex];
     const roundSelected = controlSelected
@@ -148,6 +157,10 @@ export class RoundInputComponent implements OnInit {
     );
   }
 
+  /**
+   * Adds a new round input form group if the maximum holes limit hasn't been reached.
+   * Updates the form array and related tracking arrays.
+   */
   addRound(): void {
     if (
       this.roundValidationService.validateTotalHoles(
@@ -190,6 +203,10 @@ export class RoundInputComponent implements OnInit {
     }
   }
 
+  /**
+   * Resets all rounds and form data to their initial state.
+   * Clears all differential arrays and resets the form to three empty inputs.
+   */
   resetAllRounds(): void {
     this.roundForm = this.roundFormService.resetForm();
     for (let i = 0; i < 3; i++) {

@@ -2,8 +2,9 @@ import { AbstractControl, ValidatorFn } from '@angular/forms';
 
 /**
  * Creates a custom validator for round input validation.
- * @param score - Minimum score required.
- * @returns Validator function.
+ * Ensures the score entered is not less than the minimum required score.
+ * @param score - Minimum score required for the round
+ * @returns Validator function that returns an error object if validation fails
  */
 export function roundInputValidation(score: number): ValidatorFn {
   return (control: AbstractControl): { [key: string]: boolean } | null => {
