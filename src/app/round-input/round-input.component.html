@@ -66,6 +66,11 @@
                 : "9"
             }}</span
           >
+          <span
+            *ngIf="round.get('userRoundScore')?.errors?.['maxScoreExceeded']"
+            style="font-weight: bold; color: red"
+            >Maximum score allowed is 200</span
+          >
         </div>
 
         <!-- course rating input -->
