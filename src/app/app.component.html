@@ -1,31 +1,37 @@
-<div class="container mx-auto">
-  <h1>Golf Handicap Calculator</h1>
+<div class="container">
+  <header class="mb-4">
+    <h1>Golf Handicap Calculator</h1>
+  </header>
 
-  <p>Enter up to your last 20 rounds</p>
-  <p>Need a <b>minimum</b> of 54 holes to start calculating your handicap</p>
-  <p>
-    That can be either 3 rounds of 18 or a combination of 9 holes (paired
-    together) until 54 holes are met
-  </p>
-  <p>
-    <b>NOTE:</b> if using 9 hole rounds those rounds will ONLY count when 2
-    rounds of 9 are paired together.
-  </p>
-  <p>
-    <b>Example:</b> If you have 4 rounds of 9 you will have 2 sets of '18 hole
-    scores' which will count as 2 rounds of golf. If you have 3 rounds of 9 you
-    will have 1 set of 18 hole scores with that remaining 9 hole round waiting
-    until another round of 9 is entered. Once another round of 9 is entered it
-    gets paired with the left over round of 9
-  </p>
-  <p>
-    <b>NOTE:</b> These calculations are based on the WHS (World Handicap System)
-    pre 2024 change.
-  </p>
+  <main>
+    <section class="flex flex-col gap-4 mb-7">
+      <p>
+        Need a <b>minimum</b> of 54 holes to start calculating your handicap
+      </p>
+      <p>
+        That can be either 3 rounds of 18 or a combination of 9 holes (paired
+        together) until 54 holes are met
+      </p>
+      <p>
+        <b>NOTE:</b> if using 9 hole rounds those rounds will ONLY count when 2
+        rounds of 9 are paired together.
+      </p>
+      <p>
+        <b>Example:</b> If you have 4 rounds of 9 you will have 2 sets of '18
+        hole scores' which will count as 2 rounds of golf. If you have 3 rounds
+        of 9 you will have 1 set of 18 hole scores with that remaining 9 hole
+        round waiting until another round of 9 is entered. Once another round of
+        9 is entered it gets paired with the left over round of 9
+      </p>
+      <p>
+        <b>NOTE:</b> These calculations are based on the WHS (World Handicap
+        System) pre 2024 change.
+      </p>
+    </section>
+    <app-round-input></app-round-input>
 
-  <app-round-input></app-round-input>
-
-  <!-- <p>Click <span style="text-decoration: underline; color: blue;">here</span> to see how your handicap index is calculated</p>
+    <!-- <p>Click <span style="text-decoration: underline; color: blue;">here</span> to see how your handicap index is calculated</p>
 
 <app-course-input></app-course-input> -->
+  </main>
 </div>
