@@ -10,10 +10,10 @@ import { RoundValidationResult } from '../models/round.interface';
  * Manages the form for entering golf rounds and calculates the handicap index.
  */
 @Component({
-    selector: 'app-round-input',
-    templateUrl: './round-input.component.html',
-    styleUrls: ['./round-input.component.css'],
-    standalone: false
+  selector: 'app-round-input',
+  templateUrl: './round-input.component.html',
+  styleUrls: ['./round-input.component.css'],
+  standalone: false,
 })
 export class RoundInputComponent implements OnInit {
   roundForm: FormGroup;
@@ -228,5 +228,8 @@ export class RoundInputComponent implements OnInit {
     this.totalHolesPlayedArray = [0];
     this.nineHoleDifferentialArray = [];
     this.eighteenHoleDifferentialArray = [];
+    this.roundScoreDifferentialArray = [0, 0, 0];
+    this.totalHolesPlayed = 0;
+    this.totalRoundsPlayed = 0;
   }
 }
