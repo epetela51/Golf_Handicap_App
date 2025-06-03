@@ -4,7 +4,7 @@
       formArrayName="roundInputsArray"
       *ngFor="let round of roundInputsArray.controls; let roundCount = index"
     >
-      <div [formGroupName]="roundCount" class="flex items-center gap-4 mb-4">
+      <div [formGroupName]="roundCount" class="flex items-end gap-4 mb-4">
         <!-- Round number -->
         <div class="w-48 flex flex-col items-center">
           <label
@@ -16,8 +16,8 @@
 
         <!-- 9 or 18 hole selection -->
         <ng-container formGroupName="roundSelectionGroup">
-          <div class="w-48">
-            <label class="font-bold">Round Selection:</label>
+          <div class="w-48 flex flex-col">
+            <label class="font-bold mb-2.5">Round Selection:</label>
             <div class="flex gap-4">
               <label
                 attr.for="{{ 'nineHoles' + roundCount }}"
@@ -106,7 +106,7 @@
 
         <!-- Round Sum -->
         <div>
-          <div class="font-bold">Score Differential:</div>
+          <div class="font-bold mb-2.5">Score Differential:</div>
           <div
             class="text-center"
             [ngClass]="{
