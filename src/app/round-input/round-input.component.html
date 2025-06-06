@@ -2,11 +2,15 @@
   <form [formGroup]="roundForm">
     <div
       formArrayName="roundInputsArray"
-      *ngFor="let round of roundInputsArray.controls; let roundCount = index"
+      class="grid grid-cols-[auto_auto_auto_auto_auto_auto] gap-4"
     >
-      <div [formGroupName]="roundCount" class="flex items-end gap-4 mb-4">
+      <div
+        *ngFor="let round of roundInputsArray.controls; let roundCount = index"
+        [formGroupName]="roundCount"
+        class="contents"
+      >
         <!-- Round number -->
-        <div class="w-48 flex flex-col items-center">
+        <div class="flex flex-col items-center">
           <label
             attr.for="{{ 'round_number' + roundCount }}"
             class="whitespace-nowrap font-bold"
@@ -16,7 +20,7 @@
 
         <!-- 9 or 18 hole selection -->
         <ng-container formGroupName="roundSelectionGroup">
-          <div class="w-48 flex flex-col">
+          <div class="flex flex-col">
             <label class="font-bold mb-2.5">Round Selection:</label>
             <div class="flex gap-4">
               <label
@@ -48,7 +52,7 @@
         </ng-container>
 
         <!-- round score input -->
-        <div class="w-48">
+        <div>
           <label
             attr.for="{{ 'userRoundScore' + roundCount }}"
             class="font-bold"
@@ -79,7 +83,7 @@
         </div>
 
         <!-- course rating input -->
-        <div class="w-48">
+        <div>
           <label attr.for="{{ 'courseRating' + roundCount }}" class="font-bold"
             >Course Rating:</label
           >
@@ -92,7 +96,7 @@
         </div>
 
         <!-- slope rating input -->
-        <div class="w-48">
+        <div>
           <label attr.for="{{ 'slopeRating' + roundCount }}" class="font-bold"
             >Slope Rating:</label
           >
