@@ -1,5 +1,6 @@
 <div class="container mx-auto px-4 max-w-7xl">
   <form [formGroup]="roundForm">
+    <!-- utilize grid insead of flexbox as we know the layout of the form -->
     <div
       formArrayName="roundInputsArray"
       class="grid grid-cols-[auto_auto_auto_auto_auto_auto] gap-8"
@@ -108,7 +109,7 @@
           />
         </div>
 
-        <!-- Round Sum -->
+        <!-- Score Differential -->
         <div>
           <div class="font-bold mb-2.5">Score Differential:</div>
           <div
