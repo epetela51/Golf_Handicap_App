@@ -126,24 +126,31 @@
       </div>
     </div>
 
-    <div class="mt-4">
-      Total Holes Played: {{ totalHolesPlayed }}
-      <br />
-      Total TRUE rounds played: {{ totalRoundsPlayed }}
-      <br />
-      Holes Left until Max:
-      {{
-        maxHolesAllowed - totalHolesPlayed == -9
-          ? "Max Holes Exceeded"
-          : maxHolesAllowed - totalHolesPlayed
-      }}
-      <br />
+    <!-- Total Holes Played -->
+    <div class="mt-8 text-center mx-auto">
+      <p>
+        Total holes played:
+        <span class="font-bold text-green-600">{{ totalHolesPlayed }}</span>
+      </p>
+      <p>
+        Total TRUE rounds of 18 holes played:
+        <span class="font-bold text-green-600">{{ totalRoundsPlayed }}</span>
+      </p>
+      <p>
+        Holes Left until max:
+        <span class="font-bold text-green-600">{{
+          maxHolesAllowed - totalHolesPlayed == -9
+            ? "Max Holes Exceeded"
+            : maxHolesAllowed - totalHolesPlayed
+        }}</span>
+      </p>
       <p *ngIf="maxHolesExceeded" class="text-red-600 font-bold">
         You can NOT enter an 18 hole score as it will put you over the max
         number of holes which is {{ maxHolesAllowed }} holes
       </p>
     </div>
 
+    <!-- Buttons -->
     <div class="mt-4 space-y-2">
       <button
         (click)="removeRound()"
@@ -176,6 +183,7 @@
       </button>
     </div>
 
+    <!-- Handicap Index -->
     <div class="mt-4">
       <p *ngIf="!calcBtnEnabled && handicapIndex !== 0" class="text-blue-600">
         {{ recalcHandicapMsg }}
