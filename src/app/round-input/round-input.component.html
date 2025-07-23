@@ -151,7 +151,7 @@
     </div>
 
     <!-- Buttons -->
-    <div class="mt-4 space-y-2">
+    <div class="mt-4 flex flex-col items-center mx-auto">
       <button
         (click)="removeRound()"
         class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
@@ -184,11 +184,11 @@
     </div>
 
     <!-- Handicap Index -->
-    <div class="mt-4 mb-36">
+    <div class="mt-8 mb-36 text-center">
       <p *ngIf="!calcBtnEnabled && handicapIndex !== 0" class="text-blue-600">
         {{ recalcHandicapMsg }}
       </p>
-      <p class="text-lg font-bold">
+      <p class="text-5xl font-bold mt-6">
         Your Handicap Index: <span>{{ handicapIndex }}</span>
       </p>
     </div>
