@@ -186,7 +186,18 @@
         {{ recalcHandicapMsg }}
       </p>
       <p class="text-5xl font-bold mt-6">
-        Your Handicap Index: <span>{{ handicapIndex }}</span>
+        Your Handicap Index:
+        <span
+          [ngClass]="
+            handicapIndex === 0
+              ? ''
+              : handicapIndex > 0
+              ? 'text-red-600'
+              : 'text-green-600'
+          "
+        >
+          {{ handicapIndex }}
+        </span>
       </p>
     </div>
   </form>
