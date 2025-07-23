@@ -151,7 +151,7 @@
     </div>
 
     <!-- Buttons -->
-    <div class="mt-4 flex flex-col items-center mx-auto">
+    <div class="mt-4 space-y-4 flex flex-col items-center mx-auto">
       <button
         (click)="addRound()"
         [disabled]="!roundForm.valid || totalHolesPlayed >= maxHolesAllowed"
@@ -159,21 +159,18 @@
       >
         Add Round
       </button>
-      <br />
       <button
         (click)="removeRound()"
         class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
       >
         Remove Last Round
       </button>
-      <br />
       <button
         (click)="resetAllRounds()"
         class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
       >
         Reset Form
       </button>
-      <br />
       <button
         (click)="calculateHandicapBtnClick()"
         [disabled]="calcBtnEnabled || !roundForm.valid || totalHolesPlayed < 54"
