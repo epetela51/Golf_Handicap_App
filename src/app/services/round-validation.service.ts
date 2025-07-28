@@ -67,7 +67,13 @@ export class RoundValidationService {
     };
   }
 
-  validateRoundCount(roundInputsArray: FormArray): boolean {
+  /**
+   * Checks if a round can be safely removed from the form.
+   * Validates that there are more than 3 rounds (minimum required).
+   * @param roundInputsArray - FormArray containing all round inputs
+   * @returns Boolean indicating if the round can be removed
+   */
+  canRemoveRound(roundInputsArray: FormArray): boolean {
     return roundInputsArray.length > 3;
   }
 

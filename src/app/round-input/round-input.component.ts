@@ -10,10 +10,10 @@ import { RoundValidationResult } from '../models/round.interface';
  * Manages the form for entering golf rounds and calculates the handicap index.
  */
 @Component({
-    selector: 'app-round-input',
-    templateUrl: './round-input.component.html',
-    styleUrls: ['./round-input.component.css'],
-    standalone: false
+  selector: 'app-round-input',
+  templateUrl: './round-input.component.html',
+  styleUrls: ['./round-input.component.css'],
+  standalone: false,
 })
 export class RoundInputComponent implements OnInit {
   roundForm: FormGroup;
@@ -62,10 +62,6 @@ export class RoundInputComponent implements OnInit {
 
     roundSelection?.valueChanges.subscribe((value: number | null) => {
       let roundSelectionValue: number = value ?? 0;
-
-      if (this.handicapIndex !== 0) {
-        this.handicapIndex = 0;
-      }
 
       if (this.maxHolesExceeded) {
         this.maxHolesExceeded = false;
@@ -182,29 +178,45 @@ export class RoundInputComponent implements OnInit {
     const lastSelectedRound =
       this.roundInputsArray.value[this.roundInputsArrayIndex - 1]
         .roundSelectionGroup.roundSelection;
+    const lastRoundScore =
+      this.roundInputsArray.value[this.roundInputsArrayIndex - 1]
+        .userRoundScore;
 
-    if (this.roundValidationService.validateRoundCount(this.roundInputsArray)) {
+    if (this.roundValidationService.canRemoveRound(this.roundInputsArray)) {
       this.roundInputsArray.removeAt(-1);
       this.roundScoreDifferentialArray.pop();
 
+      // Only remove from specific arrays if the round actually has data
       if (lastSelectedRound === 9) {
         this.nineHoleDifferentialArray.pop();
-      } else {
+      } else if (lastSelectedRound === 18) {
         this.eighteenHoleDifferentialArray.pop();
       }
+      // If lastSelectedRound is null, don't remove from either array
 
-      this.calcBtnEnabled = false;
-      const lastRoundInArray =
-        this.totalHolesPlayedArray[this.totalHolesPlayedArray.length - 1];
-      this.totalHolesPlayed -= lastRoundInArray;
-      this.totalHolesPlayedArray.pop();
+      // Clean up totals if a round selection was made (radio button was selected)
+      // The totalHolesPlayedArray gets updated when a radio button is selected,
+      // so we need to clean it up even if no score was entered
+      if (lastSelectedRound !== null) {
+        const lastRoundInArray =
+          this.totalHolesPlayedArray[this.totalHolesPlayedArray.length - 1];
+        this.totalHolesPlayed -= lastRoundInArray;
+        this.totalHolesPlayedArray.pop();
+
+        // Recalculate total rounds played after removing a round
+        this.totalRoundsPlayed =
+          this.handicapCalculationService.determineTrue18HoleRounds(
+            this.totalHolesPlayedArray
+          );
+      }
+
+      // Only enable recalculation if we removed a completed round (had both selection and score)
+      // This prevents the "recalculate" message when removing incomplete rounds
+      if (lastSelectedRound !== null && lastRoundScore !== null) {
+        this.calcBtnEnabled = false;
+      }
+
       this.roundInputsArrayIndex--;
-
-      // Recalculate total rounds played after removing a round
-      this.totalRoundsPlayed =
-        this.handicapCalculationService.determineTrue18HoleRounds(
-          this.totalHolesPlayedArray
-        );
     } else {
       alert('Minimum of 3 rounds are required');
     }
@@ -228,5 +240,19 @@ export class RoundInputComponent implements OnInit {
     this.totalHolesPlayedArray = [0];
     this.nineHoleDifferentialArray = [];
     this.eighteenHoleDifferentialArray = [];
+    this.roundScoreDifferentialArray = [0, 0, 0];
+    this.totalHolesPlayed = 0;
+    this.totalRoundsPlayed = 0;
+  }
+
+  /**
+   * Prevents the 'e' key from being entered in number input fields.
+   * This prevents scientific notation which is not needed for golf scores.
+   * @param event - The keyboard event
+   */
+  preventEKey(event: KeyboardEvent): void {
+    if (event.key === 'e' || event.key === 'E') {
+      event.preventDefault();
+    }
   }
 }

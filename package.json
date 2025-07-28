@@ -18,8 +18,10 @@
     "@angular/platform-browser": "^19.2.11",
     "@angular/platform-browser-dynamic": "^19.2.11",
     "@angular/router": "^19.2.11",
-    "bootstrap": "^5.2.3",
+    "@tailwindcss/postcss": "^4.1.8",
+    "postcss": "^8.5.4",
     "rxjs": "~7.5.0",
+    "tailwindcss": "^4.1.8",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
