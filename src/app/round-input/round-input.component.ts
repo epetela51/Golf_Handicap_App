@@ -244,4 +244,15 @@ export class RoundInputComponent implements OnInit {
     this.totalHolesPlayed = 0;
     this.totalRoundsPlayed = 0;
   }
+
+  /**
+   * Prevents the 'e' key from being entered in number input fields.
+   * This prevents scientific notation which is not needed for golf scores.
+   * @param event - The keyboard event
+   */
+  preventEKey(event: KeyboardEvent): void {
+    if (event.key === 'e' || event.key === 'E') {
+      event.preventDefault();
+    }
+  }
 }

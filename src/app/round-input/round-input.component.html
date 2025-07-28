@@ -64,6 +64,7 @@
             id="{{ 'userRoundScore' + roundCount }}"
             type="number"
             formControlName="userRoundScore"
+            (keydown)="preventEKey($event)"
           />
           <div class="text-red-600 font-bold">
             <span *ngIf="round.get('userRoundScore')?.errors?.['invalidForm']">
@@ -93,6 +94,7 @@
             id="{{ 'courseRating' + roundCount }}"
             type="number"
             formControlName="courseRating"
+            (keydown)="preventEKey($event)"
           />
         </div>
 
@@ -106,6 +108,7 @@
             id="{{ 'slopeRating' + roundCount }}"
             type="number"
             formControlName="slopeRating"
+            (keydown)="preventEKey($event)"
           />
         </div>
 
